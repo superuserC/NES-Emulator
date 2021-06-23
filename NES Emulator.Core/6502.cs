@@ -9,7 +9,7 @@ namespace NES_Emulator.Core
     /// <summary>
     /// Flags for processor status registry
     /// </summary>
-    public enum Flags6502
+    public enum Flags6502 : byte
     {
         Negative = 1 << 7,
         Overflow = 1 << 6,
@@ -91,5 +91,14 @@ namespace NES_Emulator.Core
             return 0x00;
         }
 
+        public void SetStatusRegister(Flags6502 state)
+        {
+
+        }
+
+        public byte ReadStatusRegister(Flags6502 state)
+        {
+            return (byte)(Status_Register & (byte)state);
+        }
     }
 }
