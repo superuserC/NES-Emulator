@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31025.194
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NES Emulator", "NES Emulator\NES Emulator.csproj", "{D2BCFF86-D316-4971-A65D-38276BDB845B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NES Emulator.Core", "NES Emulator.Core\NES Emulator.Core.csproj", "{00D6C373-F9E4-48D3-BCE3-E8F24FD6CF25}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D2BCFF86-D316-4971-A65D-38276BDB845B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D2BCFF86-D316-4971-A65D-38276BDB845B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D2BCFF86-D316-4971-A65D-38276BDB845B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D2BCFF86-D316-4971-A65D-38276BDB845B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00D6C373-F9E4-48D3-BCE3-E8F24FD6CF25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00D6C373-F9E4-48D3-BCE3-E8F24FD6CF25}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00D6C373-F9E4-48D3-BCE3-E8F24FD6CF25}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00D6C373-F9E4-48D3-BCE3-E8F24FD6CF25}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {EFECD556-F385-4E3F-9538-07D7583FF2E0}
+	EndGlobalSection
+EndGlobal
