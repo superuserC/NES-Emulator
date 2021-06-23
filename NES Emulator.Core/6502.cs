@@ -186,14 +186,21 @@ namespace NES_Emulator.Core
             return 0x00;
         }
 
-        public void SetStatusRegister(Flags6502 state)
+        public void SetStatusRegister(Flags6502 state, bool clear)
         {
-
+            if (clear)
+            {
+                Status_Register = (byte)(Status_Register & ~(byte)state);
+            }
+            else
+            {
+                Status_Register = (byte)(Status_Register | (byte)state);
+            }
         }
 
         public byte ReadStatusRegister(Flags6502 state)
         {
-            return (byte)(Status_Register & (byte)state);
+            return (Status_Register & (byte)state) == 0 ? (byte)0 : (byte)1;
         }
 
         /// <summary>
