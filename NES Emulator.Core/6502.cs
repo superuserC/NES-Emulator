@@ -28,38 +28,81 @@ namespace NES_Emulator.Core
     {
         public _6502()
         {
-            InstructionsMap = MapProcessorInstructions();
+            _instructionsMap = MapProcessorInstructions();
         }
 
         /// <summary>
         /// Accumulator
         /// </summary>
-        public byte Acc_Register { get; set; } = 0x00;
-        public byte X_Register { get; set; } = 0x00;
-        public byte Y_Register { get; set; } = 0x00;
+        private byte _acc_Register = 0x00;
+        private byte _x_Register = 0x00;
+        private byte _y_Register = 0x00;
 
         /// <summary>
         /// Stack pointer
         /// </summary>
-        public byte SP_Register { get; set; } = 0x00;
+        private byte _sp_Register = 0x00;
 
         /// <summary>
         /// Program counter
         /// </summary>
-        public ushort PC_Register { get; set; } = 0x0000;
+        private ushort _pc_Register = 0x0000;
 
         /// <summary>
         /// Flags
         /// </summary>
-        public byte Status_Register { get; set; } = 0x00;
+        private byte _status_Register = 0x00;
 
-        public List<Instruction> InstructionsMap { get; set; }
+        /// <summary>
+        /// The mapping of the processor instruction set with the insttuction implementation.
+        /// </summary>
+        private readonly List<Instruction> _instructionsMap;
+
+        /// <summary>
+        /// Represents the number of cycle for the current instruction.
+        /// </summary>
+        private int _cycles = 0;
+
+        /// <summary>
+        /// Represents the current processor instruction code.
+        /// </summary>
+        private byte _opcode = 0x00;
 
         #region events
         /// <summary>
-        /// See processor sheet.
+        /// Represents the clock.
+        /// See processor sheet for more information.
         /// </summary>
-        public void Clock() { }
+        public void Clock()
+        {
+
+            if (_cycles == 0)
+            {
+                // Means processor must read a new instruction code.
+                _opcode = Read(_pc_Register);
+
+                // Set the unused flag register to true.
+                SetStatusRegister(Flags6502.Unused, true);
+
+                // Get the instruction by using the instruction code.
+                Instruction instruction = _instructionsMap[_opcode];
+                _pc_Register++;
+
+                _cycles = instruction.Cycle;
+
+                // CHECK
+                int additionalCycleFromAM = instruction.AddressMode();
+                int additionalCycleFromOP = instruction.Operate();
+
+                // CHECK
+                _cycles += additionalCycleFromAM & additionalCycleFromOP;
+
+                // Set the unused flag register to true.
+                SetStatusRegister(Flags6502.Unused, true);
+            }
+            // Decrements the number of cycle for the current procesor instruction.
+            _cycles--;
+        }
 
         /// <summary>
         /// See processor sheet.
@@ -186,21 +229,31 @@ namespace NES_Emulator.Core
             return 0x00;
         }
 
+        /// <summary>
+        /// Set the value of status registry for the given flag.
+        /// </summary>
+        /// <param name="state"></param>
+        /// <param name="clear"></param>
         public void SetStatusRegister(Flags6502 state, bool clear)
         {
             if (clear)
             {
-                Status_Register = (byte)(Status_Register & ~(byte)state);
+                _status_Register = (byte)(_status_Register & ~(byte)state);
             }
             else
             {
-                Status_Register = (byte)(Status_Register | (byte)state);
+                _status_Register = (byte)(_status_Register | (byte)state);
             }
         }
 
+        /// <summary>
+        /// Read the value of status registry for the given flag.
+        /// </summary>
+        /// <param name="state"></param>
+        /// <returns></returns>
         public byte ReadStatusRegister(Flags6502 state)
         {
-            return (Status_Register & (byte)state) == 0 ? (byte)0 : (byte)1;
+            return (_status_Register & (byte)state) == 0 ? (byte)0 : (byte)1;
         }
 
         /// <summary>
