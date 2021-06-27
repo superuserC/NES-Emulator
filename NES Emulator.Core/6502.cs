@@ -68,6 +68,11 @@ namespace NES_Emulator.Core
         /// </summary>
         private byte _opcode = 0x00;
 
+        /// <summary>
+        /// Represent the instruction set operand;
+        /// </summary>
+        private ushort _operand_Address = 0x0000;
+
         #region events
         /// <summary>
         /// Represents the clock.
@@ -123,13 +128,29 @@ namespace NES_Emulator.Core
 
         #region addressing mode
 
-        public byte AM_IMP() { throw new NotImplementedException(); }
+        /// <summary>
+        /// No operand required for implied addressing mode.
+        /// Operation is self contained in instruction mnemonic.
+        /// </summary>
+        /// <returns></returns>
+        public byte AM_IMP() => 0;
+
+        /// <summary>
+        /// Operand is the value of the next byte.
+        /// </summary>
+        /// <returns></returns>
+        public byte AM_IMM()
+        {
+            _operand_Address = _pc_Register;
+            _pc_Register++;
+            return 0;
+        }
+
         public byte AM_ZP0() { throw new NotImplementedException(); }
         public byte AM_ZPY() { throw new NotImplementedException(); }
         public byte AM_ABS() { throw new NotImplementedException(); }
         public byte AM_ABY() { throw new NotImplementedException(); }
         public byte AM_IZX() { throw new NotImplementedException(); }
-        public byte AM_IMM() { throw new NotImplementedException(); }
         public byte AM_ZPX() { throw new NotImplementedException(); }
         public byte AM_REL() { throw new NotImplementedException(); }
         public byte AM_ABX() { throw new NotImplementedException(); }
@@ -145,20 +166,47 @@ namespace NES_Emulator.Core
         public byte BCS() { throw new NotImplementedException(); }
         public byte BNE() { throw new NotImplementedException(); }
         public byte BVS() { throw new NotImplementedException(); }
-        public byte CLV() { throw new NotImplementedException(); }
+
+        /// <summary>
+        /// Clear overflow flag.
+        /// </summary>
+        /// <returns></returns>
+        public byte CLV()
+        {
+            SetStatusRegister(Flags6502.Overflow, true);
+            return 0;
+        }
         public byte DEC() { throw new NotImplementedException(); }
         public byte INC() { throw new NotImplementedException(); }
         public byte JSR() { throw new NotImplementedException(); }
         public byte LSR() { throw new NotImplementedException(); }
         public byte PHP() { throw new NotImplementedException(); }
         public byte ROR() { throw new NotImplementedException(); }
-        public byte SEC() { throw new NotImplementedException(); }
+
+        /// <summary>
+        /// Set carry flag.
+        /// </summary>
+        /// <returns></returns>
+        public byte SEC()
+        {
+            SetStatusRegister(Flags6502.Carry, false);
+            return 0;
+        }
         public byte STX() { throw new NotImplementedException(); }
         public byte TSX() { throw new NotImplementedException(); }
         public byte AND() { throw new NotImplementedException(); }
         public byte BEQ() { throw new NotImplementedException(); }
         public byte BPL() { throw new NotImplementedException(); }
-        public byte CLC() { throw new NotImplementedException(); }
+
+        /// <summary>
+        /// Clear carry flag.
+        /// </summary>
+        /// <returns></returns>
+        public byte CLC()
+        {
+            SetStatusRegister(Flags6502.Carry, true);
+            return 0;
+        }
         public byte CMP() { throw new NotImplementedException(); }
         public byte DEX() { throw new NotImplementedException(); }
         public byte INX() { throw new NotImplementedException(); }
@@ -166,13 +214,32 @@ namespace NES_Emulator.Core
         public byte NOP() { throw new NotImplementedException(); }
         public byte PLA() { throw new NotImplementedException(); }
         public byte RTI() { throw new NotImplementedException(); }
-        public byte SED() { throw new NotImplementedException(); }
+
+        /// <summary>
+        /// Set decimal flag.
+        /// </summary>
+        /// <returns></returns>
+        public byte SED()
+        {
+            SetStatusRegister(Flags6502.DecimalMode, false);
+            return 0;
+        }
+
         public byte STY() { throw new NotImplementedException(); }
         public byte TXA() { throw new NotImplementedException(); }
         public byte ASL() { throw new NotImplementedException(); }
         public byte BIT() { throw new NotImplementedException(); }
         public byte BRK() { throw new NotImplementedException(); }
-        public byte CLD() { throw new NotImplementedException(); }
+
+        /// <summary>
+        /// Clear decimal mode.
+        /// </summary>
+        /// <returns></returns>
+        public byte CLD()
+        {
+            SetStatusRegister(Flags6502.DecimalMode, true);
+            return 0;
+        }
         public byte CPX() { throw new NotImplementedException(); }
         public byte DEY() { throw new NotImplementedException(); }
         public byte INY() { throw new NotImplementedException(); }
@@ -180,13 +247,31 @@ namespace NES_Emulator.Core
         public byte ORA() { throw new NotImplementedException(); }
         public byte PLP() { throw new NotImplementedException(); }
         public byte RTS() { throw new NotImplementedException(); }
-        public byte SEI() { throw new NotImplementedException(); }
+
+        /// <summary>
+        /// Set interrupt disable status.
+        /// </summary>
+        /// <returns></returns>
+        public byte SEI()
+        {
+            SetStatusRegister(Flags6502.IRQDisable, false);
+            return 0;
+        }
         public byte TAX() { throw new NotImplementedException(); }
         public byte TXS() { throw new NotImplementedException(); }
         public byte BCC() { throw new NotImplementedException(); }
         public byte BMI() { throw new NotImplementedException(); }
         public byte BVC() { throw new NotImplementedException(); }
-        public byte CLI() { throw new NotImplementedException(); }
+
+        /// <summary>
+        /// Clear interrupt disable bit.
+        /// </summary>
+        /// <returns></returns>
+        public byte CLI()
+        {
+            SetStatusRegister(Flags6502.IRQDisable, true);
+            return 0;
+        }
         public byte CPY() { throw new NotImplementedException(); }
         public byte EOR() { throw new NotImplementedException(); }
         public byte JMP() { throw new NotImplementedException(); }
