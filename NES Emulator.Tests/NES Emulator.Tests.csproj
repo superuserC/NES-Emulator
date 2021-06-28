@@ -16,10 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Instructions\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\NES Emulator.Core\NES Emulator.Core.csproj" />
   </ItemGroup>
 

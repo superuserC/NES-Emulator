@@ -246,7 +246,52 @@ namespace NES_Emulator.Core
             ClearFlag(Flags6502.Carry);
             return 0;
         }
-        public byte CMP() { throw new NotImplementedException(); }
+
+        /// <summary>
+        /// Compare memory with accumulator
+        /// </summary>
+        /// <returns></returns>
+        public byte CMP()
+        {
+            byte diff = (byte)(_acc_Register - _operand_Value);
+            byte sign = (byte)((diff & 1 << 7) >> 7);
+
+            if (_acc_Register < _operand_Value)
+            {
+                if (IsNegative(diff))
+                {
+                    SetFlag(Flags6502.Negative);
+                }
+                else
+                {
+                    ClearFlag(Flags6502.Negative);
+                }
+
+                ClearFlag(Flags6502.Zero);
+                ClearFlag(Flags6502.Carry);
+            }
+            else if (_acc_Register == _operand_Value)
+            {
+                SetFlag(Flags6502.Zero);
+                SetFlag(Flags6502.Carry);
+            }
+            else
+            {
+                if (IsNegative(diff))
+                {
+                    SetFlag(Flags6502.Negative);
+                }
+                else
+                {
+                    ClearFlag(Flags6502.Negative);
+                }
+
+                ClearFlag(Flags6502.Zero);
+                SetFlag(Flags6502.Carry);
+            }
+
+            return 0;
+        }
         public byte DEX() { throw new NotImplementedException(); }
         public byte INX() { throw new NotImplementedException(); }
         public byte LDA() { throw new NotImplementedException(); }
@@ -267,7 +312,46 @@ namespace NES_Emulator.Core
         public byte STY() { throw new NotImplementedException(); }
         public byte TXA() { throw new NotImplementedException(); }
         public byte ASL() { throw new NotImplementedException(); }
-        public byte BIT() { throw new NotImplementedException(); }
+
+        /// <summary>
+        /// Test bits in memory with accumulator
+        /// </summary>
+        /// <returns></returns>
+        public byte BIT()
+        {
+            byte and = (byte)(_acc_Register & _operand_Value);
+            byte M7 = (byte)(_operand_Value & (1 << 7));
+            byte M1 = (byte)(_operand_Value & (1 << 6));
+
+            if (IsZero(and))
+            {
+                SetFlag(Flags6502.Zero);
+            }
+            else
+            {
+                ClearFlag(Flags6502.Zero);
+            }
+
+            if ((M7 >> 7) == 1)
+            {
+                SetFlag(Flags6502.Negative);
+            }
+            else
+            {
+                ClearFlag(Flags6502.Negative);
+            }
+
+            if ((M1 >> 6) == 1)
+            {
+                SetFlag(Flags6502.Overflow);
+            }
+            else
+            {
+                ClearFlag(Flags6502.Overflow);
+            }
+
+            return 0;
+        }
         public byte BRK() { throw new NotImplementedException(); }
 
         /// <summary>
@@ -279,7 +363,52 @@ namespace NES_Emulator.Core
             ClearFlag(Flags6502.DecimalMode);
             return 0;
         }
-        public byte CPX() { throw new NotImplementedException(); }
+
+        /// <summary>
+        /// Compare memory and index X.
+        /// </summary>
+        /// <returns></returns>
+        public byte CPX()
+        {
+            byte diff = (byte)(_x_Register - _operand_Value);
+            byte sign = (byte)((diff & 1 << 7) >> 7);
+
+            if (_x_Register < _operand_Value)
+            {
+                if (IsNegative(diff))
+                {
+                    SetFlag(Flags6502.Negative);
+                }
+                else
+                {
+                    ClearFlag(Flags6502.Negative);
+                }
+
+                ClearFlag(Flags6502.Zero);
+                ClearFlag(Flags6502.Carry);
+            }
+            else if (_x_Register == _operand_Value)
+            {
+                SetFlag(Flags6502.Zero);
+                SetFlag(Flags6502.Carry);
+            }
+            else
+            {
+                if (IsNegative(diff))
+                {
+                    SetFlag(Flags6502.Negative);
+                }
+                else
+                {
+                    ClearFlag(Flags6502.Negative);
+                }
+
+                ClearFlag(Flags6502.Zero);
+                SetFlag(Flags6502.Carry);
+            }
+
+            return 0;
+        }
         public byte DEY() { throw new NotImplementedException(); }
         public byte INY() { throw new NotImplementedException(); }
         public byte LDX() { throw new NotImplementedException(); }
@@ -311,7 +440,52 @@ namespace NES_Emulator.Core
             ClearFlag(Flags6502.IRQDisable);
             return 0;
         }
-        public byte CPY() { throw new NotImplementedException(); }
+
+        /// <summary>
+        /// Compare memory and index Y.
+        /// </summary>
+        /// <returns></returns>
+        public byte CPY()
+        {
+            byte diff = (byte)(_y_Register - _operand_Value);
+            byte sign = (byte)((diff & 1 << 7) >> 7);
+
+            if (_y_Register < _operand_Value)
+            {
+                if (IsNegative(diff))
+                {
+                    SetFlag(Flags6502.Negative);
+                }
+                else
+                {
+                    ClearFlag(Flags6502.Negative);
+                }
+
+                ClearFlag(Flags6502.Zero);
+                ClearFlag(Flags6502.Carry);
+            }
+            else if (_y_Register == _operand_Value)
+            {
+                SetFlag(Flags6502.Zero);
+                SetFlag(Flags6502.Carry);
+            }
+            else
+            {
+                if (IsNegative(diff))
+                {
+                    SetFlag(Flags6502.Negative);
+                }
+                else
+                {
+                    ClearFlag(Flags6502.Negative);
+                }
+
+                ClearFlag(Flags6502.Zero);
+                SetFlag(Flags6502.Carry);
+            }
+
+            return 0;
+        }
         public byte EOR() { throw new NotImplementedException(); }
         public byte JMP() { throw new NotImplementedException(); }
         public byte LDY() { throw new NotImplementedException(); }
