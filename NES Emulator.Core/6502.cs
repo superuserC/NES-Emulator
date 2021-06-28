@@ -87,7 +87,7 @@ namespace NES_Emulator.Core
                 _opcode = Read(_pc_Register);
 
                 // Set the unused flag register to true.
-                SetStatusRegister(Flags6502.Unused, true);
+                ClearFlag(Flags6502.Unused);
 
                 // Get the instruction by using the instruction code.
                 Instruction instruction = _instructionsMap[_opcode];
@@ -103,7 +103,7 @@ namespace NES_Emulator.Core
                 _cycles += additionalCycleFromAM & additionalCycleFromOP;
 
                 // Set the unused flag register to true.
-                SetStatusRegister(Flags6502.Unused, true);
+                ClearFlag(Flags6502.Unused);
             }
             // Decrements the number of cycle for the current procesor instruction.
             _cycles--;
@@ -173,7 +173,7 @@ namespace NES_Emulator.Core
         /// <returns></returns>
         public byte CLV()
         {
-            SetStatusRegister(Flags6502.Overflow, true);
+            ClearFlag(Flags6502.Overflow);
             return 0;
         }
         public byte DEC() { throw new NotImplementedException(); }
@@ -189,7 +189,7 @@ namespace NES_Emulator.Core
         /// <returns></returns>
         public byte SEC()
         {
-            SetStatusRegister(Flags6502.Carry, false);
+            SetFlag(Flags6502.Carry);
             return 0;
         }
         public byte STX() { throw new NotImplementedException(); }
@@ -204,7 +204,7 @@ namespace NES_Emulator.Core
         /// <returns></returns>
         public byte CLC()
         {
-            SetStatusRegister(Flags6502.Carry, true);
+            ClearFlag(Flags6502.Carry);
             return 0;
         }
         public byte CMP() { throw new NotImplementedException(); }
@@ -221,7 +221,7 @@ namespace NES_Emulator.Core
         /// <returns></returns>
         public byte SED()
         {
-            SetStatusRegister(Flags6502.DecimalMode, false);
+            SetFlag(Flags6502.DecimalMode);
             return 0;
         }
 
@@ -237,7 +237,7 @@ namespace NES_Emulator.Core
         /// <returns></returns>
         public byte CLD()
         {
-            SetStatusRegister(Flags6502.DecimalMode, true);
+            ClearFlag(Flags6502.DecimalMode);
             return 0;
         }
         public byte CPX() { throw new NotImplementedException(); }
@@ -254,7 +254,7 @@ namespace NES_Emulator.Core
         /// <returns></returns>
         public byte SEI()
         {
-            SetStatusRegister(Flags6502.IRQDisable, false);
+            SetFlag(Flags6502.IRQDisable);
             return 0;
         }
         public byte TAX() { throw new NotImplementedException(); }
@@ -269,7 +269,7 @@ namespace NES_Emulator.Core
         /// <returns></returns>
         public byte CLI()
         {
-            SetStatusRegister(Flags6502.IRQDisable, true);
+            ClearFlag(Flags6502.IRQDisable);
             return 0;
         }
         public byte CPY() { throw new NotImplementedException(); }
@@ -315,21 +315,23 @@ namespace NES_Emulator.Core
         }
 
         /// <summary>
-        /// Set the value of status registry for the given flag.
+        /// Set the flag register to 1.
         /// </summary>
         /// <param name="state"></param>
-        /// <param name="clear"></param>
-        public void SetStatusRegister(Flags6502 state, bool clear)
+        public void SetFlag(Flags6502 state)
         {
-            if (clear)
-            {
-                _status_Register = (byte)(_status_Register & ~(byte)state);
-            }
-            else
-            {
-                _status_Register = (byte)(_status_Register | (byte)state);
-            }
+            _status_Register = (byte)(_status_Register | (byte)state);
         }
+
+        /// <summary>
+        /// Set the register flag to 0.
+        /// </summary>
+        /// <param name="state"></param>
+        public void ClearFlag(Flags6502 state)
+        {
+            _status_Register = (byte)(_status_Register & ~(byte)state);
+        }
+
 
         /// <summary>
         /// Read the value of status registry for the given flag.
