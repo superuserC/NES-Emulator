@@ -143,7 +143,12 @@ namespace NES_Emulator.Core
         /// Operation is self contained in instruction mnemonic.
         /// </summary>
         /// <returns></returns>
-        public byte AM_IMP() => 0;
+        public byte AM_IMP()
+        {
+            // this is required in case acc register is needed by instruction.
+            _operand_Value = _acc_Register;
+            return 0;
+        }
 
         /// <summary>
         /// Operand is the value of the next byte.
@@ -311,7 +316,45 @@ namespace NES_Emulator.Core
 
         public byte STY() { throw new NotImplementedException(); }
         public byte TXA() { throw new NotImplementedException(); }
-        public byte ASL() { throw new NotImplementedException(); }
+
+        /// <summary>
+        /// Shift left one bit (memory or accumulator).
+        /// </summary>
+        /// <returns></returns>
+        public byte ASL() {
+
+            bool setCarryFlag = IsNegative(_operand_Value);
+            byte tmp = (byte)(_operand_Value << 1);
+
+            if (IsNegative(tmp))
+            {
+                SetFlag(Flags6502.Negative);
+            }
+            else
+            {
+                ClearFlag(Flags6502.Negative);
+            }
+
+            if (IsZero(tmp))
+            {
+                SetFlag(Flags6502.Zero);
+            }
+            else
+            {
+                ClearFlag(Flags6502.Zero);
+            }
+
+            if (setCarryFlag)
+            {
+                SetFlag(Flags6502.Carry);
+            }
+            else
+            {
+                ClearFlag(Flags6502.Carry);
+            }
+
+            return 0;
+        }
 
         /// <summary>
         /// Test bits in memory with accumulator
