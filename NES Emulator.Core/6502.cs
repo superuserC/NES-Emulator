@@ -1,4 +1,5 @@
-﻿using NES_Emulator.Core.Interfaces;
+﻿using Dawn;
+using NES_Emulator.Core.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,7 +30,7 @@ namespace NES_Emulator.Core
     {
         public _6502(IDataTransfer dataTransfer)
         {
-            DataTransfer = dataTransfer;
+            DataTransfer = Guard.Argument(dataTransfer, nameof(dataTransfer)).NotNull().Value;
             _instructionsMap = MapProcessorInstructions();
         }
 
@@ -406,7 +407,6 @@ namespace NES_Emulator.Core
                 new Instruction(Instruction.CPX, CPX, AM_IMM, 2), new Instruction(Instruction.SBC, SBC, AM_IZX, 6),new Instruction(Instruction.UNK, XXX, AM_XXX, 0), new Instruction(Instruction.UNK, XXX, AM_XXX, 0), new Instruction(Instruction.CPX, CPX, AM_ZP0, 3), new Instruction(Instruction.SBC, SBC, AM_ZP0, 3), new Instruction(Instruction.INC, INC, AM_ZP0, 5), new Instruction(Instruction.UNK, XXX, AM_XXX, 0), new Instruction(Instruction.INX, INX, AM_IMP, 2), new Instruction(Instruction.SBC, SBC, AM_IMM, 2), new Instruction(Instruction.NOP, NOP, AM_IMP, 2), new Instruction(Instruction.UNK, XXX, AM_XXX, 0), new Instruction(Instruction.CPX, CPX, AM_ABS, 4), new Instruction(Instruction.SBC, SBC, AM_ABS, 4), new Instruction(Instruction.INC, INC, AM_ABS, 6), new Instruction(Instruction.UNK, XXX, AM_XXX, 0),
                 new Instruction(Instruction.BEQ, BEQ, AM_REL, 2), new Instruction(Instruction.SBC, SBC, AM_IZY, 5),new Instruction(Instruction.UNK, XXX, AM_XXX, 0), new Instruction(Instruction.UNK, XXX, AM_XXX, 0), new Instruction(Instruction.UNK, XXX, AM_XXX, 0), new Instruction(Instruction.SBC, SBC, AM_ZP0, 4), new Instruction(Instruction.INC, INC, AM_ZPX, 6), new Instruction(Instruction.UNK, XXX, AM_XXX, 0), new Instruction(Instruction.SED, SED, AM_IMP, 2), new Instruction(Instruction.SBC, SBC, AM_ABY, 4), new Instruction(Instruction.UNK, XXX, AM_XXX, 0), new Instruction(Instruction.UNK, XXX, AM_XXX, 0), new Instruction(Instruction.UNK, XXX, AM_XXX, 0), new Instruction(Instruction.SBC, SBC, AM_ABX, 4), new Instruction(Instruction.INC, INC, AM_ABX, 7), new Instruction(Instruction.UNK, XXX, AM_XXX, 0),
             };
-
             return map;
         }
 
@@ -415,7 +415,7 @@ namespace NES_Emulator.Core
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        private bool IsNegative(byte data)
+        public bool IsNegative(byte data)
         {
             return (data & (byte)0x80) == 0x80;
         }
@@ -425,7 +425,7 @@ namespace NES_Emulator.Core
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        private bool IsZero(byte data)
+        public bool IsZero(byte data)
         {
             return data == 0x00;
         }
