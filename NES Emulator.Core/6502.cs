@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NES_Emulator.Core.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -26,10 +27,13 @@ namespace NES_Emulator.Core
     /// </summary>
     public class _6502
     {
-        public _6502()
+        public _6502(IDataTransfer dataTransfer)
         {
+            DataTransfer = dataTransfer;
             _instructionsMap = MapProcessorInstructions();
         }
+
+        public IDataTransfer DataTransfer { get; set; }
 
         /// <summary>
         /// Accumulator
@@ -72,6 +76,11 @@ namespace NES_Emulator.Core
         /// Represent the instruction set operand;
         /// </summary>
         private ushort _operand_Address = 0x0000;
+
+        /// <summary>
+        /// Represents the the actual value of the operand for the given <see cref="_operand_Address"/>.
+        /// </summary>
+        private byte _operand_Value = 0x00;
 
         #region events
         /// <summary>
@@ -142,6 +151,7 @@ namespace NES_Emulator.Core
         public byte AM_IMM()
         {
             _operand_Address = _pc_Register;
+            _operand_Value = Read(_operand_Address);
             _pc_Register++;
             return 0;
         }
@@ -194,7 +204,35 @@ namespace NES_Emulator.Core
         }
         public byte STX() { throw new NotImplementedException(); }
         public byte TSX() { throw new NotImplementedException(); }
-        public byte AND() { throw new NotImplementedException(); }
+
+        /// <summary>
+        /// AND memory with accumulator.
+        /// </summary>
+        /// <returns></returns>
+        public byte AND()
+        {
+            _acc_Register &= _operand_Value;
+            if (IsNegative(_acc_Register))
+            {
+                SetFlag(Flags6502.Negative);
+            }
+            else
+            {
+                ClearFlag(Flags6502.Negative);
+            }
+
+            if (IsZero(_acc_Register))
+            {
+                SetFlag(Flags6502.Zero);
+            }
+            else
+            {
+                ClearFlag(Flags6502.Zero);
+            }
+
+            return 0;
+        }
+
         public byte BEQ() { throw new NotImplementedException(); }
         public byte BPL() { throw new NotImplementedException(); }
 
@@ -301,7 +339,7 @@ namespace NES_Emulator.Core
         /// <param name="data"></param>
         public void Write(ushort address, byte data)
         {
-
+            DataTransfer.Write(address, data);
         }
 
         /// <summary>
@@ -311,7 +349,7 @@ namespace NES_Emulator.Core
         /// <returns></returns>
         public byte Read(ushort address)
         {
-            return 0x00;
+            return DataTransfer.Read(address);
         }
 
         /// <summary>
@@ -370,6 +408,26 @@ namespace NES_Emulator.Core
             };
 
             return map;
+        }
+
+        /// <summary>
+        /// Check if the MSB is equal to 1.
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        private bool IsNegative(byte data)
+        {
+            return (data & (byte)0x80) == 0x80;
+        }
+
+        /// <summary>
+        /// Check if data is equal to zero;
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        private bool IsZero(byte data)
+        {
+            return data == 0x00;
         }
     }
 }
