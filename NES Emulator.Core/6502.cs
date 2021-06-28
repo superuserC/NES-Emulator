@@ -364,7 +364,7 @@ namespace NES_Emulator.Core
         {
             byte and = (byte)(_acc_Register & _operand_Value);
             byte M7 = (byte)(_operand_Value & (1 << 7));
-            byte M1 = (byte)(_operand_Value & (1 << 6));
+            byte M6 = (byte)(_operand_Value & (1 << 6));
 
             if (IsZero(and))
             {
@@ -384,7 +384,7 @@ namespace NES_Emulator.Core
                 ClearFlag(Flags6502.Negative);
             }
 
-            if ((M1 >> 6) == 1)
+            if ((M6 >> 6) == 1)
             {
                 SetFlag(Flags6502.Overflow);
             }
