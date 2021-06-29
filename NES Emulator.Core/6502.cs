@@ -192,7 +192,37 @@ namespace NES_Emulator.Core
             ClearFlag(Flags6502.Overflow);
             return 0;
         }
-        public byte DEC() { throw new NotImplementedException(); }
+
+        /// <summary>
+        /// Decrement memory by one.
+        /// </summary>
+        /// <returns></returns>
+        public byte DEC()
+        {
+            byte data = (byte)(_operand_Value - 1);
+            Write(_operand_Address, data);
+
+            if (IsNegative(data))
+            {
+                SetFlag(Flags6502.Negative);
+            }
+            else
+            {
+                ClearFlag(Flags6502.Negative);
+            }
+
+            if (IsZero(data))
+            {
+                SetFlag(Flags6502.Zero);
+            }
+            else
+            {
+                ClearFlag(Flags6502.Zero);
+            }
+
+            return 0;
+        }
+
         public byte INC() { throw new NotImplementedException(); }
         public byte JSR() { throw new NotImplementedException(); }
         public byte LSR() { throw new NotImplementedException(); }
@@ -297,7 +327,37 @@ namespace NES_Emulator.Core
 
             return 0;
         }
-        public byte DEX() { throw new NotImplementedException(); }
+
+        /// <summary>
+        /// Decrement index X by one.
+        /// </summary>
+        /// <returns></returns>
+        public byte DEX()
+        {
+            _x_Register = (byte)(_x_Register - 1);
+
+            if (IsNegative(_x_Register))
+            {
+                SetFlag(Flags6502.Negative);
+            }
+            else
+            {
+                ClearFlag(Flags6502.Negative);
+            }
+
+            if (IsZero(_x_Register))
+            {
+                SetFlag(Flags6502.Zero);
+            }
+            else
+            {
+                ClearFlag(Flags6502.Zero);
+            }
+
+            return 0;
+        }
+
+
         public byte INX() { throw new NotImplementedException(); }
         public byte LDA() { throw new NotImplementedException(); }
         public byte NOP() { throw new NotImplementedException(); }
@@ -321,7 +381,8 @@ namespace NES_Emulator.Core
         /// Shift left one bit (memory or accumulator).
         /// </summary>
         /// <returns></returns>
-        public byte ASL() {
+        public byte ASL()
+        {
 
             bool setCarryFlag = IsNegative(_operand_Value);
             byte tmp = (byte)(_operand_Value << 1);
@@ -414,7 +475,6 @@ namespace NES_Emulator.Core
         public byte CPX()
         {
             byte diff = (byte)(_x_Register - _operand_Value);
-            byte sign = (byte)((diff & 1 << 7) >> 7);
 
             if (_x_Register < _operand_Value)
             {
@@ -452,7 +512,35 @@ namespace NES_Emulator.Core
 
             return 0;
         }
-        public byte DEY() { throw new NotImplementedException(); }
+
+        /// <summary>
+        /// Decrement index Y by one.
+        /// </summary>
+        /// <returns></returns>
+        public byte DEY()
+        {
+            _y_Register = (byte)(_y_Register - 1);
+
+            if (IsNegative(_y_Register))
+            {
+                SetFlag(Flags6502.Negative);
+            }
+            else
+            {
+                ClearFlag(Flags6502.Negative);
+            }
+
+            if (IsZero(_y_Register))
+            {
+                SetFlag(Flags6502.Zero);
+            }
+            else
+            {
+                ClearFlag(Flags6502.Zero);
+            }
+
+            return 0;
+        }
         public byte INY() { throw new NotImplementedException(); }
         public byte LDX() { throw new NotImplementedException(); }
         public byte ORA() { throw new NotImplementedException(); }
@@ -491,7 +579,6 @@ namespace NES_Emulator.Core
         public byte CPY()
         {
             byte diff = (byte)(_y_Register - _operand_Value);
-            byte sign = (byte)((diff & 1 << 7) >> 7);
 
             if (_y_Register < _operand_Value)
             {
