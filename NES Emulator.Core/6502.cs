@@ -1,4 +1,5 @@
 ﻿using Dawn;
+using NES_Emulator.Core.Extensions;
 using NES_Emulator.Core.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -223,7 +224,35 @@ namespace NES_Emulator.Core
             return 0;
         }
 
-        public byte INC() { throw new NotImplementedException(); }
+        /// <summary>
+        /// Increment memory by one.
+        /// </summary>
+        /// <returns></returns>
+        public byte INC()
+        {
+            byte tmp = _operand_Value.Add(1);
+            Write(_operand_Address, tmp);
+
+            if (tmp.IsNegative())
+            {
+                SetFlag(Flags6502.Negative);
+            }
+            else
+            {
+                ClearFlag(Flags6502.Negative);
+            }
+
+            if (tmp.IsZero())
+            {
+                SetFlag(Flags6502.Zero);
+            }
+            else
+            {
+                ClearFlag(Flags6502.Zero);
+            }
+
+            return 0;
+        }
         public byte JSR() { throw new NotImplementedException(); }
         public byte LSR() { throw new NotImplementedException(); }
         public byte PHP() { throw new NotImplementedException(); }
@@ -357,8 +386,34 @@ namespace NES_Emulator.Core
             return 0;
         }
 
+        /// <summary>
+        /// Increment index X by one.
+        /// </summary>
+        /// <returns></returns>
+        public byte INX()
+        {
+            _x_Register = _x_Register.Add(1);
 
-        public byte INX() { throw new NotImplementedException(); }
+            if (_x_Register.IsNegative())
+            {
+                SetFlag(Flags6502.Negative);
+            }
+            else
+            {
+                ClearFlag(Flags6502.Negative);
+            }
+
+            if (_x_Register.IsZero())
+            {
+                SetFlag(Flags6502.Zero);
+            }
+            else
+            {
+                ClearFlag(Flags6502.Zero);
+            }
+
+            return 0;
+        }
         public byte LDA() { throw new NotImplementedException(); }
         public byte NOP() { throw new NotImplementedException(); }
         public byte PLA() { throw new NotImplementedException(); }
@@ -541,7 +596,36 @@ namespace NES_Emulator.Core
 
             return 0;
         }
-        public byte INY() { throw new NotImplementedException(); }
+
+        /// <summary>
+        /// Increment index Y by one.
+        /// </summary>
+        /// <returns></returns>
+        public byte INY()
+        {
+            _y_Register = _y_Register.Add(1);
+
+            if (_y_Register.IsNegative())
+            {
+                SetFlag(Flags6502.Negative);
+            }
+            else
+            {
+                ClearFlag(Flags6502.Negative);
+            }
+
+            if (_y_Register.IsZero())
+            {
+                SetFlag(Flags6502.Zero);
+            }
+            else
+            {
+                ClearFlag(Flags6502.Zero);
+            }
+
+            return 0;
+        }
+
         public byte LDX() { throw new NotImplementedException(); }
         public byte ORA() { throw new NotImplementedException(); }
         public byte PLP() { throw new NotImplementedException(); }
@@ -616,7 +700,35 @@ namespace NES_Emulator.Core
 
             return 0;
         }
-        public byte EOR() { throw new NotImplementedException(); }
+
+        /// <summary>
+        /// Exclusive-OR memory with accumulator.
+        /// </summary>
+        /// <returns></returns>
+        public byte EOR()
+        {
+            _acc_Register ^= _operand_Value;
+
+            if (IsNegative(_acc_Register))
+            {
+                SetFlag(Flags6502.Negative);
+            }
+            else
+            {
+                ClearFlag(Flags6502.Negative);
+            }
+
+            if (IsZero(_acc_Register))
+            {
+                SetFlag(Flags6502.Zero);
+            }
+            else
+            {
+                ClearFlag(Flags6502.Zero);
+            }
+
+            return 0;
+        }
         public byte JMP() { throw new NotImplementedException(); }
         public byte LDY() { throw new NotImplementedException(); }
         public byte PHA() { throw new NotImplementedException(); }
@@ -663,7 +775,7 @@ namespace NES_Emulator.Core
         /// <param name="state"></param>
         public void SetFlag(Flags6502 state)
         {
-            _status_Register = (byte)(_status_Register | (byte)state);
+            _status_Register = _status_Register.OR(state);
         }
 
         /// <summary>
@@ -672,7 +784,7 @@ namespace NES_Emulator.Core
         /// <param name="state"></param>
         public void ClearFlag(Flags6502 state)
         {
-            _status_Register = (byte)(_status_Register & ~(byte)state);
+            _status_Register = _status_Register.AND(~(byte)state);
         }
 
 
