@@ -414,7 +414,35 @@ namespace NES_Emulator.Core
 
             return 0;
         }
-        public byte LDA() { throw new NotImplementedException(); }
+
+        /// <summary>
+        /// Load accumulator with memory.
+        /// </summary>
+        /// <returns></returns>
+        public byte LDA()
+        {
+            _acc_Register = _operand_Value;
+
+            if (IsNegative(_operand_Value))
+            {
+                SetFlag(Flags6502.Negative);
+            }
+            else
+            {
+                ClearFlag(Flags6502.Negative);
+            }
+
+            if (IsZero(_operand_Value))
+            {
+                SetFlag(Flags6502.Zero);
+            }
+            else
+            {
+                ClearFlag(Flags6502.Zero);
+            }
+
+            return 0;
+        }
         public byte NOP() { throw new NotImplementedException(); }
         public byte PLA() { throw new NotImplementedException(); }
         public byte RTI() { throw new NotImplementedException(); }
@@ -626,7 +654,35 @@ namespace NES_Emulator.Core
             return 0;
         }
 
-        public byte LDX() { throw new NotImplementedException(); }
+        /// <summary>
+        /// Load index X with memory.
+        /// </summary>
+        /// <returns></returns>
+        public byte LDX()
+        {
+            _x_Register = _operand_Value;
+
+            if (IsNegative(_operand_Value))
+            {
+                SetFlag(Flags6502.Negative);
+            }
+            else
+            {
+                ClearFlag(Flags6502.Negative);
+            }
+
+            if (IsZero(_operand_Value))
+            {
+                SetFlag(Flags6502.Zero);
+            }
+            else
+            {
+                ClearFlag(Flags6502.Zero);
+            }
+
+            return 0;
+        }
+
         public byte ORA() { throw new NotImplementedException(); }
         public byte PLP() { throw new NotImplementedException(); }
         public byte RTS() { throw new NotImplementedException(); }
@@ -730,7 +786,35 @@ namespace NES_Emulator.Core
             return 0;
         }
         public byte JMP() { throw new NotImplementedException(); }
-        public byte LDY() { throw new NotImplementedException(); }
+
+        /// <summary>
+        /// Load index Y with memory.
+        /// </summary>
+        /// <returns></returns>
+        public byte LDY()
+        {
+            _y_Register = _operand_Value;
+
+            if (IsNegative(_operand_Value))
+            {
+                SetFlag(Flags6502.Negative);
+            }
+            else
+            {
+                ClearFlag(Flags6502.Negative);
+            }
+
+            if (IsZero(_operand_Value))
+            {
+                SetFlag(Flags6502.Zero);
+            }
+            else
+            {
+                ClearFlag(Flags6502.Zero);
+            }
+
+            return 0;
+        }
         public byte PHA() { throw new NotImplementedException(); }
         public byte ROL() { throw new NotImplementedException(); }
         public byte SBC() { throw new NotImplementedException(); }
