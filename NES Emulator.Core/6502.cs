@@ -251,9 +251,8 @@ namespace NES_Emulator.Core
         /// <returns></returns>
         public byte DEC()
         {
-            byte data = (byte)(_operand_Value - 1);
+            byte data = _operand_Value.Substract(1);
             Write(_operand_Address, data);
-
             if (data.IsNegative())
             {
                 SetFlag(Flags6502.Negative);
@@ -283,7 +282,6 @@ namespace NES_Emulator.Core
         {
             byte tmp = _operand_Value.Add(1);
             Write(_operand_Address, tmp);
-
             if (tmp.IsNegative())
             {
                 SetFlag(Flags6502.Negative);
@@ -313,7 +311,7 @@ namespace NES_Emulator.Core
         public byte LSR()
         {
             // Check if LSB is 1 for carry flag.
-            if ((_operand_Value & (byte)0x01) == 1)
+            if (_operand_Value.AND(0x01) == 1)
             {
                 SetFlag(Flags6502.Carry);
             }
@@ -495,8 +493,6 @@ namespace NES_Emulator.Core
         public byte CMP()
         {
             byte diff = (byte)(_acc_Register - _operand_Value);
-            byte sign = (byte)((diff & 1 << 7) >> 7);
-
             if (_acc_Register < _operand_Value)
             {
                 if (diff.IsNegative())
@@ -541,7 +537,6 @@ namespace NES_Emulator.Core
         public byte DEX()
         {
             _x_Register = (byte)(_x_Register - 1);
-
             if (_x_Register.IsNegative())
             {
                 SetFlag(Flags6502.Negative);
@@ -570,7 +565,6 @@ namespace NES_Emulator.Core
         public byte INX()
         {
             _x_Register = _x_Register.Add(1);
-
             if (_x_Register.IsNegative())
             {
                 SetFlag(Flags6502.Negative);
@@ -599,7 +593,6 @@ namespace NES_Emulator.Core
         public byte LDA()
         {
             _acc_Register = _operand_Value;
-
             if (_operand_Value.IsNegative())
             {
                 SetFlag(Flags6502.Negative);
@@ -637,7 +630,6 @@ namespace NES_Emulator.Core
         public byte PLA()
         {
             _acc_Register = PopFromStack();
-
             if (_acc_Register.IsNegative())
             {
                 SetFlag(Flags6502.Negative);
@@ -670,7 +662,6 @@ namespace NES_Emulator.Core
             _pc_Register = PopFromStack();
             byte oldBreakStatus = ReadStatusRegister(Flags6502.Break);
             byte oldUnusedStatus = ReadStatusRegister(Flags6502.Unused);
-
             if (oldBreakStatus == 1)
             {
                 // set break to 1.
@@ -754,7 +745,6 @@ namespace NES_Emulator.Core
 
             bool setCarryFlag = _operand_Value.IsNegative();
             byte tmp = (byte)(_operand_Value << 1);
-
             if (tmp.IsNegative())
             {
                 SetFlag(Flags6502.Negative);
@@ -791,10 +781,9 @@ namespace NES_Emulator.Core
         /// <returns></returns>
         public byte BIT()
         {
-            byte and = (byte)(_acc_Register & _operand_Value);
-            byte M7 = (byte)(_operand_Value & (1 << 7));
-            byte M6 = (byte)(_operand_Value & (1 << 6));
-
+            byte and = _acc_Register.AND(_operand_Value);
+            byte M7 = _operand_Value.AND(1 << 7);
+            byte M6 = _operand_Value.AND(1 << 6);
             if (and.IsZero())
             {
                 SetFlag(Flags6502.Zero);
@@ -843,7 +832,6 @@ namespace NES_Emulator.Core
         public byte CPX()
         {
             byte diff = (byte)(_x_Register - _operand_Value);
-
             if (_x_Register < _operand_Value)
             {
                 if (diff.IsNegative())
@@ -888,7 +876,6 @@ namespace NES_Emulator.Core
         public byte DEY()
         {
             _y_Register = (byte)(_y_Register - 1);
-
             if (_y_Register.IsNegative())
             {
                 SetFlag(Flags6502.Negative);
@@ -917,7 +904,6 @@ namespace NES_Emulator.Core
         public byte INY()
         {
             _y_Register = _y_Register.Add(1);
-
             if (_y_Register.IsNegative())
             {
                 SetFlag(Flags6502.Negative);
@@ -946,7 +932,6 @@ namespace NES_Emulator.Core
         public byte LDX()
         {
             _x_Register = _operand_Value;
-
             if (_operand_Value.IsNegative())
             {
                 SetFlag(Flags6502.Negative);
@@ -998,7 +983,7 @@ namespace NES_Emulator.Core
         }
 
         /// <summary>
-        /// pull processor status from stack.
+        /// Pull processor status from stack.
         /// </summary>
         /// <returns></returns>
         public byte PLP()
@@ -1130,8 +1115,7 @@ namespace NES_Emulator.Core
         /// <returns></returns>
         public byte CPY()
         {
-            byte diff = (byte)(_y_Register - _operand_Value);
-
+            byte diff = _y_Register.Substract(_operand_Value);
             if (_y_Register < _operand_Value)
             {
                 if (diff.IsNegative())
@@ -1389,6 +1373,24 @@ namespace NES_Emulator.Core
         {
             _status_Register = _status_Register.OR(state);
         }
+
+        /// <summary>
+        /// Update the flag register.
+        /// </summary>
+        /// <param name="state"></param>
+        /// <param name="activated"></param>
+        public void SetFlag(Flags6502 state, bool activated)
+        {
+            if (activated)
+            {
+                _status_Register = _status_Register.OR(state);
+            }
+            else
+            {
+                _status_Register = _status_Register.AND(~(byte)state);
+            }
+        }
+
 
         /// <summary>
         /// Set the register flag to 0.
