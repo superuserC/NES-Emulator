@@ -551,7 +551,35 @@ namespace NES_Emulator.Core
             return 0;
         }
 
-        public byte PLA() { throw new NotImplementedException(); }
+        /// <summary>
+        /// Pull accumulator from stack.
+        /// </summary>
+        /// <returns></returns>
+        public byte PLA()
+        {
+            _acc_Register = PopFromStack();
+
+            if (_acc_Register.IsNegative())
+            {
+                SetFlag(Flags6502.Negative);
+            }
+            else
+            {
+                ClearFlag(Flags6502.Negative);
+            }
+
+            if (_acc_Register.IsZero())
+            {
+                SetFlag(Flags6502.Zero);
+            }
+            else
+            {
+                ClearFlag(Flags6502.Zero);
+            }
+
+            return 0;
+        }
+
         public byte RTI() { throw new NotImplementedException(); }
 
         /// <summary>
@@ -818,7 +846,17 @@ namespace NES_Emulator.Core
 
             return 0;
         }
-        public byte PLP() { throw new NotImplementedException(); }
+        
+        /// <summary>
+        /// pull processor status from stack.
+        /// </summary>
+        /// <returns></returns>
+        public byte PLP()
+        {
+            _status_Register = PopFromStack();
+            return 0;
+        }
+
         public byte RTS() { throw new NotImplementedException(); }
 
         /// <summary>
