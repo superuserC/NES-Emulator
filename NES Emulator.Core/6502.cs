@@ -406,8 +406,46 @@ namespace NES_Emulator.Core
             SetFlag(Flags6502.Carry);
             return 0;
         }
-        public byte STX() { throw new NotImplementedException(); }
-        public byte TSX() { throw new NotImplementedException(); }
+
+        /// <summary>
+        /// Store index X in memory
+        /// </summary>
+        /// <returns></returns>
+        public byte STX()
+        {
+            Write(_operand_Address, _x_Register);
+            return 0;
+        }
+
+        /// <summary>
+        /// Transfer stack pointer to index X.
+        /// SP -> X
+        /// </summary>
+        /// <returns></returns>
+        public byte TSX()
+        {
+            _x_Register = _sp_Register;
+            if (_x_Register.IsNegative())
+            {
+                SetFlag(Flags6502.Negative);
+            }
+            else
+            {
+                ClearFlag(Flags6502.Negative);
+            }
+
+            if (_x_Register.IsZero())
+            {
+                SetFlag(Flags6502.Zero);
+            }
+            else
+            {
+                ClearFlag(Flags6502.Zero);
+            }
+
+            return 0;
+
+        }
 
         /// <summary>
         /// AND memory with accumulator.
@@ -621,7 +659,41 @@ namespace NES_Emulator.Core
             return 0;
         }
 
-        public byte RTI() { throw new NotImplementedException(); }
+        /// <summary>
+        /// Return from interrupt.
+        /// pull SR, pull PC
+        /// </summary>
+        /// <returns></returns>
+        public byte RTI()
+        {
+            byte tmp = PopFromStack();
+            _pc_Register = PopFromStack();
+            byte oldBreakStatus = ReadStatusRegister(Flags6502.Break);
+            byte oldUnusedStatus = ReadStatusRegister(Flags6502.Unused);
+
+            if (oldBreakStatus == 1)
+            {
+                // set break to 1.
+                tmp = tmp.OR(0x10);
+            }
+            else
+            {
+                // set break to 0.
+                tmp = tmp.AND(~0x10);
+            }
+
+            if (oldUnusedStatus == 1)
+            {
+                tmp = tmp.OR(0x20);
+            }
+            else
+            {
+                tmp = tmp.AND(~0x20);
+            }
+
+            _status_Register = tmp;
+            return 0;
+        }
 
         /// <summary>
         /// Set decimal flag.
@@ -633,8 +705,45 @@ namespace NES_Emulator.Core
             return 0;
         }
 
-        public byte STY() { throw new NotImplementedException(); }
-        public byte TXA() { throw new NotImplementedException(); }
+        /// <summary>
+        /// Sore index Y in memory.
+        /// Y -> M
+        /// </summary>
+        /// <returns></returns>
+        public byte STY()
+        {
+            Write(_operand_Address, _y_Register);
+            return 0;
+        }
+
+        /// <summary>
+        /// Transfer index X to accumulator.
+        /// X -> A
+        /// </summary>
+        /// <returns></returns>
+        public byte TXA()
+        {
+            _acc_Register = _x_Register;
+            if (_acc_Register.IsNegative())
+            {
+                SetFlag(Flags6502.Negative);
+            }
+            else
+            {
+                ClearFlag(Flags6502.Negative);
+            }
+
+            if (_acc_Register.IsZero())
+            {
+                SetFlag(Flags6502.Zero);
+            }
+            else
+            {
+                ClearFlag(Flags6502.Zero);
+            }
+
+            return 0;
+        }
 
         /// <summary>
         /// Shift left one bit (memory or accumulator).
@@ -923,7 +1032,16 @@ namespace NES_Emulator.Core
             return 0;
         }
 
-        public byte RTS() { throw new NotImplementedException(); }
+        /// <summary>
+        /// Return from subroutine.
+        /// pull PC, PC+1 -> PC
+        /// </summary>
+        /// <returns></returns>
+        public byte RTS()
+        {
+            _pc_Register = PopFromStack().Add(1);
+            return 0;
+        }
 
         /// <summary>
         /// Set interrupt disable status.
@@ -934,8 +1052,64 @@ namespace NES_Emulator.Core
             SetFlag(Flags6502.IRQDisable);
             return 0;
         }
-        public byte TAX() { throw new NotImplementedException(); }
-        public byte TXS() { throw new NotImplementedException(); }
+
+        /// <summary>
+        /// Transfer accumulator to index X
+        /// A -> X
+        /// </summary>
+        /// <returns></returns>
+        public byte TAX()
+        {
+            _x_Register = _acc_Register;
+            if (_x_Register.IsNegative())
+            {
+                SetFlag(Flags6502.Negative);
+            }
+            else
+            {
+                ClearFlag(Flags6502.Negative);
+            }
+
+            if (_x_Register.IsZero())
+            {
+                SetFlag(Flags6502.Zero);
+            }
+            else
+            {
+                ClearFlag(Flags6502.Zero);
+            }
+
+            return 0;
+        }
+
+        /// <summary>
+        /// Transfer index X to stack register.
+        /// X -> SP
+        /// </summary>
+        /// <returns></returns>
+        public byte TXS()
+        {
+            _sp_Register = _x_Register;
+            if (_sp_Register.IsNegative())
+            {
+                SetFlag(Flags6502.Negative);
+            }
+            else
+            {
+                ClearFlag(Flags6502.Negative);
+            }
+
+            if (_sp_Register.IsZero())
+            {
+                SetFlag(Flags6502.Zero);
+            }
+            else
+            {
+                ClearFlag(Flags6502.Zero);
+            }
+
+            return 0;
+        }
         public byte BCC() { throw new NotImplementedException(); }
         public byte BMI() { throw new NotImplementedException(); }
         public byte BVC() { throw new NotImplementedException(); }
@@ -1106,9 +1280,75 @@ namespace NES_Emulator.Core
 
 
         public byte SBC() { throw new NotImplementedException(); }
-        public byte STA() { throw new NotImplementedException(); }
-        public byte TAY() { throw new NotImplementedException(); }
-        public byte TYA() { throw new NotImplementedException(); }
+
+        /// <summary>
+        /// Store accumulator in memory.
+        /// A -> M
+        /// </summary>
+        /// <returns></returns>
+        public byte STA()
+        {
+            Write(_operand_Address, _acc_Register);
+            return 0;
+        }
+
+        /// <summary>
+        /// Transfer accumulator to index Y
+        /// A -> Y
+        /// </summary>
+        /// <returns></returns>
+        public byte TAY()
+        {
+            _y_Register = _acc_Register;
+            if (_y_Register.IsNegative())
+            {
+                SetFlag(Flags6502.Negative);
+            }
+            else
+            {
+                ClearFlag(Flags6502.Negative);
+            }
+
+            if (_y_Register.IsZero())
+            {
+                SetFlag(Flags6502.Zero);
+            }
+            else
+            {
+                ClearFlag(Flags6502.Zero);
+            }
+
+            return 0;
+        }
+
+        /// <summary>
+        /// Transfer index Y to accumulator.
+        /// Y -> A
+        /// </summary>
+        /// <returns></returns>
+        public byte TYA()
+        {
+            _acc_Register = _y_Register;
+            if (_acc_Register.IsNegative())
+            {
+                SetFlag(Flags6502.Negative);
+            }
+            else
+            {
+                ClearFlag(Flags6502.Negative);
+            }
+
+            if (_acc_Register.IsZero())
+            {
+                SetFlag(Flags6502.Zero);
+            }
+            else
+            {
+                ClearFlag(Flags6502.Zero);
+            }
+
+            return 0;
+        }
 
         /// <summary>
         /// Invalid instructions.
