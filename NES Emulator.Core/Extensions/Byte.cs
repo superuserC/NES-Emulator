@@ -104,5 +104,26 @@ namespace NES_Emulator.Core.Extensions
         {
             return (byte)(value ^ value2);
         }
+
+        /// <summary>
+        /// Shift right one bit.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static byte SR(this byte value)
+        {
+            return (byte)(value >> value);
+        }
+
+        /// <summary>
+        /// Shift left one bit.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static byte SL(this byte value)
+        {
+            return (byte)(value << value);
+        }
+
     }
 }

@@ -47,7 +47,7 @@ namespace NES_Emulator.Core
         /// <summary>
         /// Stack pointer
         /// </summary>
-        private byte _sp_Register = 0x00;
+        private byte _sp_Register = 0xFF;
 
         /// <summary>
         /// Program counter
@@ -83,6 +83,11 @@ namespace NES_Emulator.Core
         /// Represents the the actual value of the operand for the given <see cref="_operand_Address"/>.
         /// </summary>
         private byte _operand_Value = 0x00;
+
+        /// <summary>
+        /// Defines addressing mode is implied.
+        /// </summary>
+        private bool _isAMImplied = false;
 
         #region events
         /// <summary>
@@ -146,6 +151,7 @@ namespace NES_Emulator.Core
         /// <returns></returns>
         public byte AM_IMP()
         {
+            _isAMImplied = true;
             // this is required in case acc register is needed by instruction.
             _operand_Value = _acc_Register;
             return 0;
@@ -157,23 +163,68 @@ namespace NES_Emulator.Core
         /// <returns></returns>
         public byte AM_IMM()
         {
+            _isAMImplied = false;
             _operand_Address = _pc_Register;
             _operand_Value = Read(_operand_Address);
             _pc_Register++;
             return 0;
         }
 
-        public byte AM_ZP0() { throw new NotImplementedException(); }
-        public byte AM_ZPY() { throw new NotImplementedException(); }
-        public byte AM_ABS() { throw new NotImplementedException(); }
-        public byte AM_ABY() { throw new NotImplementedException(); }
-        public byte AM_IZX() { throw new NotImplementedException(); }
-        public byte AM_ZPX() { throw new NotImplementedException(); }
-        public byte AM_REL() { throw new NotImplementedException(); }
-        public byte AM_ABX() { throw new NotImplementedException(); }
-        public byte AM_IND() { throw new NotImplementedException(); }
-        public byte AM_IZY() { throw new NotImplementedException(); }
-        public byte AM_XXX() { throw new NotImplementedException(); }
+        public byte AM_ZP0()
+        {
+            _isAMImplied = false;
+            throw new NotImplementedException();
+        }
+        public byte AM_ZPY()
+        {
+            _isAMImplied = false;
+            throw new NotImplementedException();
+        }
+        public byte AM_ABS()
+        {
+            _isAMImplied = false;
+            throw new NotImplementedException();
+        }
+        public byte AM_ABY()
+        {
+            _isAMImplied = false;
+            throw new NotImplementedException();
+        }
+        public byte AM_IZX()
+        {
+            _isAMImplied = false;
+            throw new NotImplementedException();
+        }
+        public byte AM_ZPX()
+        {
+            _isAMImplied = false;
+            _isAMImplied = false; throw new NotImplementedException();
+        }
+        public byte AM_REL()
+        {
+            _isAMImplied = false;
+            throw new NotImplementedException();
+        }
+        public byte AM_ABX()
+        {
+            _isAMImplied = false;
+            throw new NotImplementedException();
+        }
+        public byte AM_IND()
+        {
+            _isAMImplied = false;
+            throw new NotImplementedException();
+        }
+        public byte AM_IZY()
+        {
+            _isAMImplied = false;
+            throw new NotImplementedException();
+        }
+        public byte AM_XXX()
+        {
+            _isAMImplied = false;
+            throw new NotImplementedException();
+        }
 
         #endregion
 
@@ -254,7 +305,46 @@ namespace NES_Emulator.Core
             return 0;
         }
         public byte JSR() { throw new NotImplementedException(); }
-        public byte LSR() { throw new NotImplementedException(); }
+
+        /// <summary>
+        /// Shift one bit right (memory or accumulator)
+        /// </summary>
+        /// <returns></returns>
+        public byte LSR()
+        {
+            // Check if LSB is 1 for carry flag.
+            if ((_operand_Value & (byte)0x01) == 1)
+            {
+                SetFlag(Flags6502.Carry);
+            }
+            else
+            {
+                ClearFlag(Flags6502.Carry);
+            }
+
+            byte tmp = _operand_Value.SR();
+            if (tmp.IsZero())
+            {
+                SetFlag(Flags6502.Zero);
+            }
+            else
+            {
+                ClearFlag(Flags6502.Zero);
+            }
+
+            if (_isAMImplied)
+            {
+                _acc_Register = tmp;
+            }
+            else
+            {
+                Write(_operand_Address, tmp);
+            }
+
+            return 0;
+        }
+
+
         public byte PHP() { throw new NotImplementedException(); }
         public byte ROR() { throw new NotImplementedException(); }
 
@@ -443,7 +533,16 @@ namespace NES_Emulator.Core
 
             return 0;
         }
-        public byte NOP() { throw new NotImplementedException(); }
+
+        /// <summary>
+        /// No operation.
+        /// </summary>
+        /// <returns></returns>
+        public byte NOP()
+        {
+            return 0;
+        }
+
         public byte PLA() { throw new NotImplementedException(); }
         public byte RTI() { throw new NotImplementedException(); }
 
@@ -683,7 +782,34 @@ namespace NES_Emulator.Core
             return 0;
         }
 
-        public byte ORA() { throw new NotImplementedException(); }
+        /// <summary>
+        /// Or memory with accumulator.
+        /// </summary>
+        /// <returns></returns>
+        public byte ORA()
+        {
+            _acc_Register = _operand_Value.OR(_acc_Register);
+
+            if (_acc_Register.IsNegative())
+            {
+                SetFlag(Flags6502.Negative);
+            }
+            else
+            {
+                ClearFlag(Flags6502.Negative);
+            }
+
+            if (_acc_Register.IsZero())
+            {
+                SetFlag(Flags6502.Zero);
+            }
+            else
+            {
+                ClearFlag(Flags6502.Zero);
+            }
+
+            return 0;
+        }
         public byte PLP() { throw new NotImplementedException(); }
         public byte RTS() { throw new NotImplementedException(); }
 
@@ -815,7 +941,18 @@ namespace NES_Emulator.Core
 
             return 0;
         }
-        public byte PHA() { throw new NotImplementedException(); }
+
+        /// <summary>
+        /// Push cccumulator on stack
+        /// </summary>
+        /// <returns></returns>
+        public byte PHA()
+        {
+            PushToStack(_acc_Register);
+            return 0;
+        }
+
+
         public byte ROL() { throw new NotImplementedException(); }
         public byte SBC() { throw new NotImplementedException(); }
         public byte STA() { throw new NotImplementedException(); }
@@ -929,5 +1066,39 @@ namespace NES_Emulator.Core
         {
             return data == 0x00;
         }
+
+        /// <summary>
+        /// Provides the address targeted by stack pointer register.
+        /// Address can be in the range 0x0100 to 0x01FF.
+        /// </summary>
+        /// <param name="stackPointer"></param>
+        /// <returns></returns>
+        public ushort GetStackPointerAddress()
+        {
+            return _sp_Register.Add(0x0100);
+        }
+
+
+        /// <summary>
+        /// Push value to the stack.
+        /// </summary>
+        /// <param name="value"></param>
+        public void PushToStack(byte value)
+        {
+            _sp_Register--;
+            Write(GetStackPointerAddress(), value);
+        }
+
+        /// <summary>
+        /// Pop value from the stack.
+        /// </summary>
+        /// <returns></returns>
+        public byte PopFromStack()
+        {
+            byte tmp = Read(GetStackPointerAddress());
+            _sp_Register++;
+            return tmp;
+        }
+
     }
 }
