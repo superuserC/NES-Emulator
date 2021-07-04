@@ -85,7 +85,7 @@ namespace NES_Emulator.Core
         private byte _operand_Value = 0x00;
 
         /// <summary>
-        /// Defines addressing mode is implied.
+        /// Defines if addressing mode is implied.
         /// </summary>
         private bool _isAMImplied = false;
 
@@ -356,7 +356,46 @@ namespace NES_Emulator.Core
             return 0;
         }
 
-        public byte ROR() { throw new NotImplementedException(); }
+        /// <summary>
+        /// Rotate one bit right (memory or accumulator).
+        /// C -> [76543210] -> C
+        /// </summary>
+        /// <returns></returns>
+        public byte ROR()
+        {
+            byte carryFlag = ReadStatusRegister(Flags6502.Carry);
+            byte tmp = _operand_Value;
+            if (tmp.AND(0x01) == 1)
+            {
+                SetFlag(Flags6502.Carry);
+            }
+            else
+            {
+                ClearFlag(Flags6502.Carry);
+            }
+
+            tmp = tmp.SR();
+            if (carryFlag == 1)
+            {
+                tmp = tmp.OR(0x80);
+            }
+            else
+            {
+                tmp = tmp.AND(~0x80);
+            }
+
+            if (_isAMImplied)
+            {
+                _acc_Register = tmp;
+            }
+            else
+            {
+                Write(_operand_Address, tmp);
+            }
+
+            return 0;
+
+        }
 
         /// <summary>
         /// Set carry flag.
@@ -848,7 +887,7 @@ namespace NES_Emulator.Core
 
             return 0;
         }
-        
+
         /// <summary>
         /// pull processor status from stack.
         /// </summary>
@@ -858,7 +897,7 @@ namespace NES_Emulator.Core
             byte tmp = PopFromStack();
             byte breakFlag = ReadStatusRegister(Flags6502.Break);
             byte unusedFlag = ReadStatusRegister(Flags6502.Unused);
-            if(breakFlag == 1)
+            if (breakFlag == 1)
             {
                 // set break flag to 1
                 tmp = tmp.OR(0x10);
@@ -869,7 +908,7 @@ namespace NES_Emulator.Core
                 tmp = tmp.AND(~0x10);
             }
 
-            if(unusedFlag == 1)
+            if (unusedFlag == 1)
             {
                 // set unused flag to 1
                 tmp = tmp.OR(0x20);
@@ -1025,15 +1064,54 @@ namespace NES_Emulator.Core
             return 0;
         }
 
+        /// <summary>
+        /// Rotate one bit left (memory or accumulator)
+        /// C <- [76543210] <- C
+        /// </summary>
+        /// <returns></returns>
+        public byte ROL()
+        {
+            byte carryFlag = ReadStatusRegister(Flags6502.Carry);
+            byte tmp = _operand_Value;
+            if (tmp.IsNegative())
+            {
+                SetFlag(Flags6502.Carry);
+            }
+            else
+            {
+                ClearFlag(Flags6502.Carry);
+            }
 
-        public byte ROL() { throw new NotImplementedException(); }
+            tmp = tmp.SL();
+            if (carryFlag == 1)
+            {
+                tmp = tmp.OR(0x01);
+            }
+            else
+            {
+                tmp = tmp.AND(~0x01);
+            }
+
+            if (_isAMImplied)
+            {
+                _acc_Register = tmp;
+            }
+            else
+            {
+                Write(_operand_Address, tmp);
+            }
+
+            return 0;
+        }
+
+
         public byte SBC() { throw new NotImplementedException(); }
         public byte STA() { throw new NotImplementedException(); }
         public byte TAY() { throw new NotImplementedException(); }
         public byte TYA() { throw new NotImplementedException(); }
 
         /// <summary>
-        /// Neede for invalid instructions.
+        /// Invalid instructions.
         /// </summary>
         /// <returns></returns>
         public byte XXX()
