@@ -253,24 +253,8 @@ namespace NES_Emulator.Core
         {
             byte data = _operand_Value.Substract(1);
             Write(_operand_Address, data);
-            if (data.IsNegative())
-            {
-                SetFlag(Flags6502.Negative);
-            }
-            else
-            {
-                ClearFlag(Flags6502.Negative);
-            }
-
-            if (data.IsZero())
-            {
-                SetFlag(Flags6502.Zero);
-            }
-            else
-            {
-                ClearFlag(Flags6502.Zero);
-            }
-
+            SetFlag(Flags6502.Negative, data.IsNegative());
+            SetFlag(Flags6502.Zero, data.IsZero());
             return 0;
         }
 
@@ -282,24 +266,8 @@ namespace NES_Emulator.Core
         {
             byte tmp = _operand_Value.Add(1);
             Write(_operand_Address, tmp);
-            if (tmp.IsNegative())
-            {
-                SetFlag(Flags6502.Negative);
-            }
-            else
-            {
-                ClearFlag(Flags6502.Negative);
-            }
-
-            if (tmp.IsZero())
-            {
-                SetFlag(Flags6502.Zero);
-            }
-            else
-            {
-                ClearFlag(Flags6502.Zero);
-            }
-
+            SetFlag(Flags6502.Negative, tmp.IsNegative());
+            SetFlag(Flags6502.Zero, tmp.IsZero());
             return 0;
         }
         public byte JSR() { throw new NotImplementedException(); }
@@ -311,25 +279,9 @@ namespace NES_Emulator.Core
         public byte LSR()
         {
             // Check if LSB is 1 for carry flag.
-            if (_operand_Value.AND(0x01) == 1)
-            {
-                SetFlag(Flags6502.Carry);
-            }
-            else
-            {
-                ClearFlag(Flags6502.Carry);
-            }
-
+            SetFlag(Flags6502.Carry, _operand_Value.AND(0x01) == 1);
             byte tmp = _operand_Value.SR();
-            if (tmp.IsZero())
-            {
-                SetFlag(Flags6502.Zero);
-            }
-            else
-            {
-                ClearFlag(Flags6502.Zero);
-            }
-
+            SetFlag(Flags6502.Zero, tmp.IsZero());
             if (_isAMImplied)
             {
                 _acc_Register = tmp;
@@ -363,15 +315,7 @@ namespace NES_Emulator.Core
         {
             byte carryFlag = ReadStatusRegister(Flags6502.Carry);
             byte tmp = _operand_Value;
-            if (tmp.AND(0x01) == 1)
-            {
-                SetFlag(Flags6502.Carry);
-            }
-            else
-            {
-                ClearFlag(Flags6502.Carry);
-            }
-
+            SetFlag(Flags6502.Carry, tmp.AND(0x01) == 1);
             tmp = tmp.SR();
             if (carryFlag == 1)
             {
@@ -423,24 +367,8 @@ namespace NES_Emulator.Core
         public byte TSX()
         {
             _x_Register = _sp_Register;
-            if (_x_Register.IsNegative())
-            {
-                SetFlag(Flags6502.Negative);
-            }
-            else
-            {
-                ClearFlag(Flags6502.Negative);
-            }
-
-            if (_x_Register.IsZero())
-            {
-                SetFlag(Flags6502.Zero);
-            }
-            else
-            {
-                ClearFlag(Flags6502.Zero);
-            }
-
+            SetFlag(Flags6502.Negative, _x_Register.IsNegative());
+            SetFlag(Flags6502.Zero, _x_Register.IsZero());
             return 0;
 
         }
@@ -452,24 +380,8 @@ namespace NES_Emulator.Core
         public byte AND()
         {
             _acc_Register &= _operand_Value;
-            if (_acc_Register.IsNegative())
-            {
-                SetFlag(Flags6502.Negative);
-            }
-            else
-            {
-                ClearFlag(Flags6502.Negative);
-            }
-
-            if (_acc_Register.IsZero())
-            {
-                SetFlag(Flags6502.Zero);
-            }
-            else
-            {
-                ClearFlag(Flags6502.Zero);
-            }
-
+            SetFlag(Flags6502.Negative, _acc_Register.IsNegative());
+            SetFlag(Flags6502.Zero, _acc_Register.IsZero());
             return 0;
         }
 
@@ -495,15 +407,7 @@ namespace NES_Emulator.Core
             byte diff = (byte)(_acc_Register - _operand_Value);
             if (_acc_Register < _operand_Value)
             {
-                if (diff.IsNegative())
-                {
-                    SetFlag(Flags6502.Negative);
-                }
-                else
-                {
-                    ClearFlag(Flags6502.Negative);
-                }
-
+                SetFlag(Flags6502.Negative, diff.IsNegative());
                 ClearFlag(Flags6502.Zero);
                 ClearFlag(Flags6502.Carry);
             }
@@ -514,15 +418,7 @@ namespace NES_Emulator.Core
             }
             else
             {
-                if (diff.IsNegative())
-                {
-                    SetFlag(Flags6502.Negative);
-                }
-                else
-                {
-                    ClearFlag(Flags6502.Negative);
-                }
-
+                SetFlag(Flags6502.Negative, diff.IsNegative());
                 ClearFlag(Flags6502.Zero);
                 SetFlag(Flags6502.Carry);
             }
@@ -537,24 +433,8 @@ namespace NES_Emulator.Core
         public byte DEX()
         {
             _x_Register = (byte)(_x_Register - 1);
-            if (_x_Register.IsNegative())
-            {
-                SetFlag(Flags6502.Negative);
-            }
-            else
-            {
-                ClearFlag(Flags6502.Negative);
-            }
-
-            if (_x_Register.IsZero())
-            {
-                SetFlag(Flags6502.Zero);
-            }
-            else
-            {
-                ClearFlag(Flags6502.Zero);
-            }
-
+            SetFlag(Flags6502.Negative, _x_Register.IsNegative());
+            SetFlag(Flags6502.Zero, _x_Register.IsZero());
             return 0;
         }
 
@@ -565,24 +445,8 @@ namespace NES_Emulator.Core
         public byte INX()
         {
             _x_Register = _x_Register.Add(1);
-            if (_x_Register.IsNegative())
-            {
-                SetFlag(Flags6502.Negative);
-            }
-            else
-            {
-                ClearFlag(Flags6502.Negative);
-            }
-
-            if (_x_Register.IsZero())
-            {
-                SetFlag(Flags6502.Zero);
-            }
-            else
-            {
-                ClearFlag(Flags6502.Zero);
-            }
-
+            SetFlag(Flags6502.Negative, _x_Register.IsNegative());
+            SetFlag(Flags6502.Zero, _x_Register.IsZero());
             return 0;
         }
 
@@ -593,24 +457,8 @@ namespace NES_Emulator.Core
         public byte LDA()
         {
             _acc_Register = _operand_Value;
-            if (_operand_Value.IsNegative())
-            {
-                SetFlag(Flags6502.Negative);
-            }
-            else
-            {
-                ClearFlag(Flags6502.Negative);
-            }
-
-            if (_operand_Value.IsZero())
-            {
-                SetFlag(Flags6502.Zero);
-            }
-            else
-            {
-                ClearFlag(Flags6502.Zero);
-            }
-
+            SetFlag(Flags6502.Negative, _operand_Value.IsNegative());
+            SetFlag(Flags6502.Zero, _operand_Value.IsZero());
             return 0;
         }
 
@@ -630,24 +478,8 @@ namespace NES_Emulator.Core
         public byte PLA()
         {
             _acc_Register = PopFromStack();
-            if (_acc_Register.IsNegative())
-            {
-                SetFlag(Flags6502.Negative);
-            }
-            else
-            {
-                ClearFlag(Flags6502.Negative);
-            }
-
-            if (_acc_Register.IsZero())
-            {
-                SetFlag(Flags6502.Zero);
-            }
-            else
-            {
-                ClearFlag(Flags6502.Zero);
-            }
-
+            SetFlag(Flags6502.Negative, _acc_Register.IsNegative());
+            SetFlag(Flags6502.Zero, _acc_Register.IsZero());
             return 0;
         }
 
@@ -715,24 +547,9 @@ namespace NES_Emulator.Core
         public byte TXA()
         {
             _acc_Register = _x_Register;
-            if (_acc_Register.IsNegative())
-            {
-                SetFlag(Flags6502.Negative);
-            }
-            else
-            {
-                ClearFlag(Flags6502.Negative);
-            }
-
-            if (_acc_Register.IsZero())
-            {
-                SetFlag(Flags6502.Zero);
-            }
-            else
-            {
-                ClearFlag(Flags6502.Zero);
-            }
-
+            SetFlag(Flags6502.Negative, _acc_Register.IsNegative());
+            ClearFlag(Flags6502.Negative);
+            SetFlag(Flags6502.Zero, _acc_Register.IsZero());
             return 0;
         }
 
@@ -745,33 +562,9 @@ namespace NES_Emulator.Core
 
             bool setCarryFlag = _operand_Value.IsNegative();
             byte tmp = (byte)(_operand_Value << 1);
-            if (tmp.IsNegative())
-            {
-                SetFlag(Flags6502.Negative);
-            }
-            else
-            {
-                ClearFlag(Flags6502.Negative);
-            }
-
-            if (tmp.IsZero())
-            {
-                SetFlag(Flags6502.Zero);
-            }
-            else
-            {
-                ClearFlag(Flags6502.Zero);
-            }
-
-            if (setCarryFlag)
-            {
-                SetFlag(Flags6502.Carry);
-            }
-            else
-            {
-                ClearFlag(Flags6502.Carry);
-            }
-
+            SetFlag(Flags6502.Negative, tmp.IsNegative());
+            SetFlag(Flags6502.Zero, tmp.IsZero());
+            SetFlag(Flags6502.Carry, setCarryFlag);
             return 0;
         }
 
@@ -784,33 +577,9 @@ namespace NES_Emulator.Core
             byte and = _acc_Register.AND(_operand_Value);
             byte M7 = _operand_Value.AND(1 << 7);
             byte M6 = _operand_Value.AND(1 << 6);
-            if (and.IsZero())
-            {
-                SetFlag(Flags6502.Zero);
-            }
-            else
-            {
-                ClearFlag(Flags6502.Zero);
-            }
-
-            if ((M7 >> 7) == 1)
-            {
-                SetFlag(Flags6502.Negative);
-            }
-            else
-            {
-                ClearFlag(Flags6502.Negative);
-            }
-
-            if ((M6 >> 6) == 1)
-            {
-                SetFlag(Flags6502.Overflow);
-            }
-            else
-            {
-                ClearFlag(Flags6502.Overflow);
-            }
-
+            SetFlag(Flags6502.Zero, and.IsZero());
+            SetFlag(Flags6502.Negative, (M7 >> 7) == 1);
+            SetFlag(Flags6502.Overflow, (M6 >> 6) == 1);
             return 0;
         }
         public byte BRK() { throw new NotImplementedException(); }
@@ -834,15 +603,7 @@ namespace NES_Emulator.Core
             byte diff = (byte)(_x_Register - _operand_Value);
             if (_x_Register < _operand_Value)
             {
-                if (diff.IsNegative())
-                {
-                    SetFlag(Flags6502.Negative);
-                }
-                else
-                {
-                    ClearFlag(Flags6502.Negative);
-                }
-
+                SetFlag(Flags6502.Negative, diff.IsNegative());
                 ClearFlag(Flags6502.Zero);
                 ClearFlag(Flags6502.Carry);
             }
@@ -853,15 +614,7 @@ namespace NES_Emulator.Core
             }
             else
             {
-                if (diff.IsNegative())
-                {
-                    SetFlag(Flags6502.Negative);
-                }
-                else
-                {
-                    ClearFlag(Flags6502.Negative);
-                }
-
+                SetFlag(Flags6502.Negative, diff.IsNegative());
                 ClearFlag(Flags6502.Zero);
                 SetFlag(Flags6502.Carry);
             }
@@ -876,24 +629,8 @@ namespace NES_Emulator.Core
         public byte DEY()
         {
             _y_Register = (byte)(_y_Register - 1);
-            if (_y_Register.IsNegative())
-            {
-                SetFlag(Flags6502.Negative);
-            }
-            else
-            {
-                ClearFlag(Flags6502.Negative);
-            }
-
-            if (_y_Register.IsZero())
-            {
-                SetFlag(Flags6502.Zero);
-            }
-            else
-            {
-                ClearFlag(Flags6502.Zero);
-            }
-
+            SetFlag(Flags6502.Negative, _y_Register.IsNegative());
+            SetFlag(Flags6502.Zero, _y_Register.IsZero());
             return 0;
         }
 
@@ -904,24 +641,8 @@ namespace NES_Emulator.Core
         public byte INY()
         {
             _y_Register = _y_Register.Add(1);
-            if (_y_Register.IsNegative())
-            {
-                SetFlag(Flags6502.Negative);
-            }
-            else
-            {
-                ClearFlag(Flags6502.Negative);
-            }
-
-            if (_y_Register.IsZero())
-            {
-                SetFlag(Flags6502.Zero);
-            }
-            else
-            {
-                ClearFlag(Flags6502.Zero);
-            }
-
+            SetFlag(Flags6502.Negative, _y_Register.IsNegative());
+            SetFlag(Flags6502.Zero, _y_Register.IsZero());
             return 0;
         }
 
@@ -932,24 +653,8 @@ namespace NES_Emulator.Core
         public byte LDX()
         {
             _x_Register = _operand_Value;
-            if (_operand_Value.IsNegative())
-            {
-                SetFlag(Flags6502.Negative);
-            }
-            else
-            {
-                ClearFlag(Flags6502.Negative);
-            }
-
-            if (_operand_Value.IsZero())
-            {
-                SetFlag(Flags6502.Zero);
-            }
-            else
-            {
-                ClearFlag(Flags6502.Zero);
-            }
-
+            SetFlag(Flags6502.Negative, _operand_Value.IsNegative());
+            SetFlag(Flags6502.Zero, _operand_Value.IsZero());
             return 0;
         }
 
@@ -960,25 +665,8 @@ namespace NES_Emulator.Core
         public byte ORA()
         {
             _acc_Register = _operand_Value.OR(_acc_Register);
-
-            if (_acc_Register.IsNegative())
-            {
-                SetFlag(Flags6502.Negative);
-            }
-            else
-            {
-                ClearFlag(Flags6502.Negative);
-            }
-
-            if (_acc_Register.IsZero())
-            {
-                SetFlag(Flags6502.Zero);
-            }
-            else
-            {
-                ClearFlag(Flags6502.Zero);
-            }
-
+            SetFlag(Flags6502.Negative, _acc_Register.IsNegative());
+            SetFlag(Flags6502.Zero, _acc_Register.IsZero());
             return 0;
         }
 
@@ -1046,24 +734,8 @@ namespace NES_Emulator.Core
         public byte TAX()
         {
             _x_Register = _acc_Register;
-            if (_x_Register.IsNegative())
-            {
-                SetFlag(Flags6502.Negative);
-            }
-            else
-            {
-                ClearFlag(Flags6502.Negative);
-            }
-
-            if (_x_Register.IsZero())
-            {
-                SetFlag(Flags6502.Zero);
-            }
-            else
-            {
-                ClearFlag(Flags6502.Zero);
-            }
-
+            SetFlag(Flags6502.Negative, _x_Register.IsNegative());
+            SetFlag(Flags6502.Zero, _x_Register.IsZero());
             return 0;
         }
 
@@ -1075,24 +747,8 @@ namespace NES_Emulator.Core
         public byte TXS()
         {
             _sp_Register = _x_Register;
-            if (_sp_Register.IsNegative())
-            {
-                SetFlag(Flags6502.Negative);
-            }
-            else
-            {
-                ClearFlag(Flags6502.Negative);
-            }
-
-            if (_sp_Register.IsZero())
-            {
-                SetFlag(Flags6502.Zero);
-            }
-            else
-            {
-                ClearFlag(Flags6502.Zero);
-            }
-
+            SetFlag(Flags6502.Negative, _sp_Register.IsNegative());
+            SetFlag(Flags6502.Zero, _sp_Register.IsZero());
             return 0;
         }
         public byte BCC() { throw new NotImplementedException(); }
@@ -1118,15 +774,7 @@ namespace NES_Emulator.Core
             byte diff = _y_Register.Substract(_operand_Value);
             if (_y_Register < _operand_Value)
             {
-                if (diff.IsNegative())
-                {
-                    SetFlag(Flags6502.Negative);
-                }
-                else
-                {
-                    ClearFlag(Flags6502.Negative);
-                }
-
+                SetFlag(Flags6502.Negative, diff.IsNegative());
                 ClearFlag(Flags6502.Zero);
                 ClearFlag(Flags6502.Carry);
             }
@@ -1137,15 +785,7 @@ namespace NES_Emulator.Core
             }
             else
             {
-                if (diff.IsNegative())
-                {
-                    SetFlag(Flags6502.Negative);
-                }
-                else
-                {
-                    ClearFlag(Flags6502.Negative);
-                }
-
+                SetFlag(Flags6502.Negative, diff.IsNegative());
                 ClearFlag(Flags6502.Zero);
                 SetFlag(Flags6502.Carry);
             }
@@ -1160,25 +800,8 @@ namespace NES_Emulator.Core
         public byte EOR()
         {
             _acc_Register ^= _operand_Value;
-
-            if (_acc_Register.IsNegative())
-            {
-                SetFlag(Flags6502.Negative);
-            }
-            else
-            {
-                ClearFlag(Flags6502.Negative);
-            }
-
-            if (_acc_Register.IsZero())
-            {
-                SetFlag(Flags6502.Zero);
-            }
-            else
-            {
-                ClearFlag(Flags6502.Zero);
-            }
-
+            SetFlag(Flags6502.Negative, _acc_Register.IsNegative());
+            SetFlag(Flags6502.Zero, _acc_Register.IsZero());
             return 0;
         }
         public byte JMP() { throw new NotImplementedException(); }
@@ -1190,25 +813,8 @@ namespace NES_Emulator.Core
         public byte LDY()
         {
             _y_Register = _operand_Value;
-
-            if (_operand_Value.IsNegative())
-            {
-                SetFlag(Flags6502.Negative);
-            }
-            else
-            {
-                ClearFlag(Flags6502.Negative);
-            }
-
-            if (_operand_Value.IsZero())
-            {
-                SetFlag(Flags6502.Zero);
-            }
-            else
-            {
-                ClearFlag(Flags6502.Zero);
-            }
-
+            SetFlag(Flags6502.Negative, _y_Register.IsNegative());
+            SetFlag(Flags6502.Zero, _y_Register.IsZero());
             return 0;
         }
 
@@ -1231,15 +837,7 @@ namespace NES_Emulator.Core
         {
             byte carryFlag = ReadStatusRegister(Flags6502.Carry);
             byte tmp = _operand_Value;
-            if (tmp.IsNegative())
-            {
-                SetFlag(Flags6502.Carry);
-            }
-            else
-            {
-                ClearFlag(Flags6502.Carry);
-            }
-
+            SetFlag(Flags6502.Carry, tmp.IsNegative());
             tmp = tmp.SL();
             if (carryFlag == 1)
             {
@@ -1284,24 +882,8 @@ namespace NES_Emulator.Core
         public byte TAY()
         {
             _y_Register = _acc_Register;
-            if (_y_Register.IsNegative())
-            {
-                SetFlag(Flags6502.Negative);
-            }
-            else
-            {
-                ClearFlag(Flags6502.Negative);
-            }
-
-            if (_y_Register.IsZero())
-            {
-                SetFlag(Flags6502.Zero);
-            }
-            else
-            {
-                ClearFlag(Flags6502.Zero);
-            }
-
+            SetFlag(Flags6502.Negative, _y_Register.IsNegative());
+            SetFlag(Flags6502.Zero, _y_Register.IsZero());
             return 0;
         }
 
@@ -1313,24 +895,8 @@ namespace NES_Emulator.Core
         public byte TYA()
         {
             _acc_Register = _y_Register;
-            if (_acc_Register.IsNegative())
-            {
-                SetFlag(Flags6502.Negative);
-            }
-            else
-            {
-                ClearFlag(Flags6502.Negative);
-            }
-
-            if (_acc_Register.IsZero())
-            {
-                SetFlag(Flags6502.Zero);
-            }
-            else
-            {
-                ClearFlag(Flags6502.Zero);
-            }
-
+            SetFlag(Flags6502.Negative, _acc_Register.IsNegative());
+            SetFlag(Flags6502.Zero, _acc_Register.IsZero());
             return 0;
         }
 
