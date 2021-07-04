@@ -350,7 +350,9 @@ namespace NES_Emulator.Core
         /// <returns></returns>
         public byte PHP()
         {
-            PushToStack(_status_Register);
+            // Set the break and unused flag to 1.
+            byte tmp = _status_Register.OR(0x10).OR(0x20);
+            PushToStack(tmp);
             return 0;
         }
 
@@ -853,7 +855,32 @@ namespace NES_Emulator.Core
         /// <returns></returns>
         public byte PLP()
         {
-            _status_Register = PopFromStack();
+            byte tmp = PopFromStack();
+            byte breakFlag = ReadStatusRegister(Flags6502.Break);
+            byte unusedFlag = ReadStatusRegister(Flags6502.Unused);
+            if(breakFlag == 1)
+            {
+                // set break flag to 1
+                tmp = tmp.OR(0x10);
+            }
+            else
+            {
+                // set break flag to 0
+                tmp = tmp.AND(~0x10);
+            }
+
+            if(unusedFlag == 1)
+            {
+                // set unused flag to 1
+                tmp = tmp.OR(0x20);
+            }
+            else
+            {
+                // set unused flag to 0
+                tmp = tmp.AND(~0x20);
+            }
+
+            _status_Register = tmp;
             return 0;
         }
 
