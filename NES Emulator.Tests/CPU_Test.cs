@@ -1,6 +1,7 @@
 ﻿using AutoFixture;
 using Moq;
 using NES_Emulator.Core;
+using NES_Emulator.Core.Extensions;
 using NES_Emulator.Core.Interfaces;
 using NES_Emulator.Tests.Helper;
 using NUnit.Framework;
@@ -63,7 +64,7 @@ namespace NES_Emulator.Tests
             byte data = 0xFF;
             _6502 cpu = GetInstance();
 
-            bool result = cpu.IsNegative(data);
+            bool result = data.IsNegative();
 
             Assert.IsTrue(result);
         }
@@ -77,7 +78,7 @@ namespace NES_Emulator.Tests
             byte data = 0x4F;
             _6502 cpu = GetInstance();
 
-            bool result = cpu.IsNegative(data);
+            bool result = data.IsNegative();
 
             Assert.IsFalse(result);
         }

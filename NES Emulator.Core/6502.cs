@@ -254,7 +254,7 @@ namespace NES_Emulator.Core
             byte data = (byte)(_operand_Value - 1);
             Write(_operand_Address, data);
 
-            if (IsNegative(data))
+            if (data.IsNegative())
             {
                 SetFlag(Flags6502.Negative);
             }
@@ -263,7 +263,7 @@ namespace NES_Emulator.Core
                 ClearFlag(Flags6502.Negative);
             }
 
-            if (IsZero(data))
+            if (data.IsZero())
             {
                 SetFlag(Flags6502.Zero);
             }
@@ -367,7 +367,7 @@ namespace NES_Emulator.Core
         public byte AND()
         {
             _acc_Register &= _operand_Value;
-            if (IsNegative(_acc_Register))
+            if (_acc_Register.IsNegative())
             {
                 SetFlag(Flags6502.Negative);
             }
@@ -376,7 +376,7 @@ namespace NES_Emulator.Core
                 ClearFlag(Flags6502.Negative);
             }
 
-            if (IsZero(_acc_Register))
+            if (_acc_Register.IsZero())
             {
                 SetFlag(Flags6502.Zero);
             }
@@ -412,7 +412,7 @@ namespace NES_Emulator.Core
 
             if (_acc_Register < _operand_Value)
             {
-                if (IsNegative(diff))
+                if (diff.IsNegative())
                 {
                     SetFlag(Flags6502.Negative);
                 }
@@ -431,7 +431,7 @@ namespace NES_Emulator.Core
             }
             else
             {
-                if (IsNegative(diff))
+                if (diff.IsNegative())
                 {
                     SetFlag(Flags6502.Negative);
                 }
@@ -455,7 +455,7 @@ namespace NES_Emulator.Core
         {
             _x_Register = (byte)(_x_Register - 1);
 
-            if (IsNegative(_x_Register))
+            if (_x_Register.IsNegative())
             {
                 SetFlag(Flags6502.Negative);
             }
@@ -464,7 +464,7 @@ namespace NES_Emulator.Core
                 ClearFlag(Flags6502.Negative);
             }
 
-            if (IsZero(_x_Register))
+            if (_x_Register.IsZero())
             {
                 SetFlag(Flags6502.Zero);
             }
@@ -513,7 +513,7 @@ namespace NES_Emulator.Core
         {
             _acc_Register = _operand_Value;
 
-            if (IsNegative(_operand_Value))
+            if (_operand_Value.IsNegative())
             {
                 SetFlag(Flags6502.Negative);
             }
@@ -522,7 +522,7 @@ namespace NES_Emulator.Core
                 ClearFlag(Flags6502.Negative);
             }
 
-            if (IsZero(_operand_Value))
+            if (_operand_Value.IsZero())
             {
                 SetFlag(Flags6502.Zero);
             }
@@ -566,10 +566,10 @@ namespace NES_Emulator.Core
         public byte ASL()
         {
 
-            bool setCarryFlag = IsNegative(_operand_Value);
+            bool setCarryFlag = _operand_Value.IsNegative();
             byte tmp = (byte)(_operand_Value << 1);
 
-            if (IsNegative(tmp))
+            if (tmp.IsNegative())
             {
                 SetFlag(Flags6502.Negative);
             }
@@ -578,7 +578,7 @@ namespace NES_Emulator.Core
                 ClearFlag(Flags6502.Negative);
             }
 
-            if (IsZero(tmp))
+            if (tmp.IsZero())
             {
                 SetFlag(Flags6502.Zero);
             }
@@ -609,7 +609,7 @@ namespace NES_Emulator.Core
             byte M7 = (byte)(_operand_Value & (1 << 7));
             byte M6 = (byte)(_operand_Value & (1 << 6));
 
-            if (IsZero(and))
+            if (and.IsZero())
             {
                 SetFlag(Flags6502.Zero);
             }
@@ -660,7 +660,7 @@ namespace NES_Emulator.Core
 
             if (_x_Register < _operand_Value)
             {
-                if (IsNegative(diff))
+                if (diff.IsNegative())
                 {
                     SetFlag(Flags6502.Negative);
                 }
@@ -679,7 +679,7 @@ namespace NES_Emulator.Core
             }
             else
             {
-                if (IsNegative(diff))
+                if (diff.IsNegative())
                 {
                     SetFlag(Flags6502.Negative);
                 }
@@ -703,7 +703,7 @@ namespace NES_Emulator.Core
         {
             _y_Register = (byte)(_y_Register - 1);
 
-            if (IsNegative(_y_Register))
+            if (_y_Register.IsNegative())
             {
                 SetFlag(Flags6502.Negative);
             }
@@ -712,7 +712,7 @@ namespace NES_Emulator.Core
                 ClearFlag(Flags6502.Negative);
             }
 
-            if (IsZero(_y_Register))
+            if (_y_Register.IsZero())
             {
                 SetFlag(Flags6502.Zero);
             }
@@ -761,7 +761,7 @@ namespace NES_Emulator.Core
         {
             _x_Register = _operand_Value;
 
-            if (IsNegative(_operand_Value))
+            if (_operand_Value.IsNegative())
             {
                 SetFlag(Flags6502.Negative);
             }
@@ -770,7 +770,7 @@ namespace NES_Emulator.Core
                 ClearFlag(Flags6502.Negative);
             }
 
-            if (IsZero(_operand_Value))
+            if (_operand_Value.IsZero())
             {
                 SetFlag(Flags6502.Zero);
             }
@@ -848,7 +848,7 @@ namespace NES_Emulator.Core
 
             if (_y_Register < _operand_Value)
             {
-                if (IsNegative(diff))
+                if (diff.IsNegative())
                 {
                     SetFlag(Flags6502.Negative);
                 }
@@ -867,7 +867,7 @@ namespace NES_Emulator.Core
             }
             else
             {
-                if (IsNegative(diff))
+                if (diff.IsNegative())
                 {
                     SetFlag(Flags6502.Negative);
                 }
@@ -891,7 +891,7 @@ namespace NES_Emulator.Core
         {
             _acc_Register ^= _operand_Value;
 
-            if (IsNegative(_acc_Register))
+            if (_acc_Register.IsNegative())
             {
                 SetFlag(Flags6502.Negative);
             }
@@ -900,7 +900,7 @@ namespace NES_Emulator.Core
                 ClearFlag(Flags6502.Negative);
             }
 
-            if (IsZero(_acc_Register))
+            if (_acc_Register.IsZero())
             {
                 SetFlag(Flags6502.Zero);
             }
@@ -921,7 +921,7 @@ namespace NES_Emulator.Core
         {
             _y_Register = _operand_Value;
 
-            if (IsNegative(_operand_Value))
+            if (_operand_Value.IsNegative())
             {
                 SetFlag(Flags6502.Negative);
             }
@@ -930,7 +930,7 @@ namespace NES_Emulator.Core
                 ClearFlag(Flags6502.Negative);
             }
 
-            if (IsZero(_operand_Value))
+            if (_operand_Value.IsZero())
             {
                 SetFlag(Flags6502.Zero);
             }
@@ -1045,26 +1045,6 @@ namespace NES_Emulator.Core
                 new Instruction(Instruction.BEQ, BEQ, AM_REL, 2), new Instruction(Instruction.SBC, SBC, AM_IZY, 5),new Instruction(Instruction.UNK, XXX, AM_XXX, 0), new Instruction(Instruction.UNK, XXX, AM_XXX, 0), new Instruction(Instruction.UNK, XXX, AM_XXX, 0), new Instruction(Instruction.SBC, SBC, AM_ZP0, 4), new Instruction(Instruction.INC, INC, AM_ZPX, 6), new Instruction(Instruction.UNK, XXX, AM_XXX, 0), new Instruction(Instruction.SED, SED, AM_IMP, 2), new Instruction(Instruction.SBC, SBC, AM_ABY, 4), new Instruction(Instruction.UNK, XXX, AM_XXX, 0), new Instruction(Instruction.UNK, XXX, AM_XXX, 0), new Instruction(Instruction.UNK, XXX, AM_XXX, 0), new Instruction(Instruction.SBC, SBC, AM_ABX, 4), new Instruction(Instruction.INC, INC, AM_ABX, 7), new Instruction(Instruction.UNK, XXX, AM_XXX, 0),
             };
             return map;
-        }
-
-        /// <summary>
-        /// Check if the MSB is equal to 1.
-        /// </summary>
-        /// <param name="data"></param>
-        /// <returns></returns>
-        public bool IsNegative(byte data)
-        {
-            return (data & (byte)0x80) == 0x80;
-        }
-
-        /// <summary>
-        /// Check if data is equal to zero;
-        /// </summary>
-        /// <param name="data"></param>
-        /// <returns></returns>
-        public bool IsZero(byte data)
-        {
-            return data == 0x00;
         }
 
         /// <summary>
