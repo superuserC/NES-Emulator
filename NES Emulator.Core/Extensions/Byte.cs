@@ -13,20 +13,14 @@ namespace NES_Emulator.Core.Extensions
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static bool IsNegative(this byte value)
-        {
-            return (value & (byte)0x80) == 0x80;
-        }
+        public static bool IsNegative(this byte value) => (value & (byte)0x80) == 0x80;
 
         /// <summary>
         /// Check if value is equal to zero.
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static bool IsZero(this byte value)
-        {
-            return value == 0x00;
-        }
+        public static bool IsZero(this byte value) => value == 0x00;
 
         /// <summary>
         /// Add operation.
@@ -34,10 +28,7 @@ namespace NES_Emulator.Core.Extensions
         /// <param name="value"></param>
         /// <param name="value2"></param>
         /// <returns></returns>
-        public static byte Add(this byte value, int value2)
-        {
-            return (byte)(value + value2);
-        }
+        public static byte Add(this byte value, int value2) => (byte)(value + value2);
 
         /// <summary>
         /// Substract operation.
@@ -45,10 +36,7 @@ namespace NES_Emulator.Core.Extensions
         /// <param name="value"></param>
         /// <param name="value2"></param>
         /// <returns></returns>
-        public static byte Substract(this byte value, int value2)
-        {
-            return (byte)(value - value2);
-        }
+        public static byte Substract(this byte value, int value2) => (byte)(value - value2);
 
         /// <summary>
         /// Performs AND operator.
@@ -56,10 +44,7 @@ namespace NES_Emulator.Core.Extensions
         /// <param name="value"></param>
         /// <param name="value2"></param>
         /// <returns></returns>
-        public static byte AND(this byte value, int value2)
-        {
-            return (byte)(value & value2);
-        }
+        public static byte AND(this byte value, int value2) => (byte)(value & value2);
 
         /// <summary>
         /// Performs AND operator.
@@ -67,10 +52,7 @@ namespace NES_Emulator.Core.Extensions
         /// <param name="value"></param>
         /// <param name="state"></param>
         /// <returns></returns>
-        public static byte AND(this byte value, Flags6502 state)
-        {
-            return (byte)(value & (byte)state);
-        }
+        public static byte AND(this byte value, Flags6502 state) => (byte)(value & (byte)state);
 
         /// <summary>
         /// Performs OR operator.
@@ -78,10 +60,7 @@ namespace NES_Emulator.Core.Extensions
         /// <param name="value"></param>
         /// <param name="value2"></param>
         /// <returns></returns>
-        public static byte OR(this byte value, int value2)
-        {
-            return (byte)(value | value2);
-        }
+        public static byte OR(this byte value, int value2) => (byte)(value | value2);
 
         /// <summary>
         /// Performs OR operator.
@@ -89,10 +68,7 @@ namespace NES_Emulator.Core.Extensions
         /// <param name="value"></param>
         /// <param name="state"></param>
         /// <returns></returns>
-        public static byte OR(this byte value, Flags6502 state)
-        {
-            return (byte)(value | (byte)state);
-        }
+        public static byte OR(this byte value, Flags6502 state) => (byte)(value | (byte)state);
 
         /// <summary>
         /// Performs XOR operator.
@@ -100,30 +76,21 @@ namespace NES_Emulator.Core.Extensions
         /// <param name="value"></param>
         /// <param name="value2"></param>
         /// <returns></returns>
-        public static byte XOR(this byte value, int value2)
-        {
-            return (byte)(value ^ value2);
-        }
+        public static byte XOR(this byte value, int value2)  => (byte)(value ^ value2);
 
         /// <summary>
         /// Shift right one bit.
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static byte SR(this byte value)
-        {
-            return (byte)(value >> value);
-        }
+        public static byte SR(this byte value) => (byte) (value >> value);
 
         /// <summary>
         /// Shift left one bit.
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static byte SL(this byte value)
-        {
-            return (byte)(value << value);
-        }
+        public static byte SL(this byte value) => (byte)(value << value);
 
     }
 }

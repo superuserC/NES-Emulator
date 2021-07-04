@@ -344,8 +344,16 @@ namespace NES_Emulator.Core
             return 0;
         }
 
+        /// <summary>
+        /// Push processor status on stack
+        /// </summary>
+        /// <returns></returns>
+        public byte PHP()
+        {
+            PushToStack(_status_Register);
+            return 0;
+        }
 
-        public byte PHP() { throw new NotImplementedException(); }
         public byte ROR() { throw new NotImplementedException(); }
 
         /// <summary>
