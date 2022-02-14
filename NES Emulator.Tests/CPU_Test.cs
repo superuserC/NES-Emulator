@@ -1,9 +1,11 @@
 ﻿using AutoFixture;
+using FluentAssertions;
 using Moq;
 using NES_Emulator.Core;
 using NES_Emulator.Core.Extensions;
 using NES_Emulator.Core.Interfaces;
 using NES_Emulator.Tests.Helper;
+using NSubstitute;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -23,6 +25,7 @@ namespace NES_Emulator.Tests
         {
             _fixture = new Fixture();
             _mockDataTransfer = MockDataTransferHelper.GetMock();
+
 
         }
 
@@ -150,10 +153,20 @@ namespace NES_Emulator.Tests
             Assert.AreEqual(zero, 1);
             Assert.AreEqual(carry, 1);
         }
+        public void ZP0_ConstructsAddressWithZeroHighByte()
+        {
+            _6502 cpu = GetInstance();
+            cpu.DataTransfer = Substitute.For<IDataTransfer>();
+            cpu.DataTransfer.Read(Arg.Any<ushort>()).Returns((byte)0xff);
+            var result = cpu.AM_ZP0();
+            result.Should().Be(0);
+        }
 
         private _6502 GetInstance()
         {
             return new _6502(_mockDataTransfer.Object);
         }
+
+
     }
 }

@@ -147,6 +147,7 @@ namespace NES_Emulator.Core
         /// <summary>
         /// No operand required for implied addressing mode.
         /// Operation is self contained in instruction mnemonic.
+        /// Also used for Acc mode.
         /// </summary>
         /// <returns></returns>
         public byte AM_IMP()
@@ -170,20 +171,41 @@ namespace NES_Emulator.Core
             return 0;
         }
 
+        /// <summary>
+        /// Zero page.
+        /// hi-byte is zero, address = $00LL
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
         public byte AM_ZP0()
         {
             _isAMImplied = false;
-            throw new NotImplementedException();
+            _operand_Address = (ushort)(0x0000 | Read(_pc_Register));
+            _pc_Register++;
+            return 0;
         }
         public byte AM_ZPY()
         {
             _isAMImplied = false;
             throw new NotImplementedException();
         }
+
+        /// <summary>
+        /// Absolute.
+        /// Operand is address $LLHH.
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
         public byte AM_ABS()
         {
             _isAMImplied = false;
-            throw new NotImplementedException();
+            ushort low = Read(_pc_Register);
+            _pc_Register++;
+            ushort high = Read(_pc_Register);
+            _pc_Register++;
+
+            _operand_Address = (ushort)((ushort)(low << 8) | high);
+            return 0;
         }
         public byte AM_ABY()
         {
@@ -198,7 +220,8 @@ namespace NES_Emulator.Core
         public byte AM_ZPX()
         {
             _isAMImplied = false;
-            _isAMImplied = false; throw new NotImplementedException();
+            _isAMImplied = false; 
+            throw new NotImplementedException();
         }
         public byte AM_REL()
         {

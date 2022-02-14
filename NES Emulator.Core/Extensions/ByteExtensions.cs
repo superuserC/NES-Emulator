@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace NES_Emulator.Core.Extensions
 {
-    public static class Byte
+    public static class ByteExtensions
     {
         /// <summary>
         /// Check if MSB is equal to one.
