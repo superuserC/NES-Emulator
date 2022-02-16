@@ -180,14 +180,33 @@ namespace NES_Emulator.Core
         public byte AM_ZP0()
         {
             _isAMImplied = false;
-            _operand_Address = (ushort)(0x0000 | Read(_pc_Register));
+            _operand_Address = (ushort)(0x00ff & Read(_pc_Register));
             _pc_Register++;
             return 0;
         }
+
+        /// <summary>
+        /// Zero page, x indexed.
+        /// </summary>
+        /// <returns></returns>
+        public byte AM_ZPX()
+        {
+            _isAMImplied = false;
+            _operand_Address = (ushort)(0x00ff & (Read(_pc_Register) + _x_Register));
+            _pc_Register++;
+            return 0;
+        }
+
+        /// <summary>
+        /// Zero page, y indexed.
+        /// </summary>
+        /// <returns></returns>
         public byte AM_ZPY()
         {
             _isAMImplied = false;
-            throw new NotImplementedException();
+            _operand_Address = (ushort)(0x00ff & (Read(_pc_Register) + _y_Register));
+            _pc_Register++;
+            return 0;
         }
 
         /// <summary>
@@ -204,23 +223,60 @@ namespace NES_Emulator.Core
             ushort high = Read(_pc_Register);
             _pc_Register++;
 
-            _operand_Address = (ushort)((ushort)(low << 8) | high);
+            _operand_Address = (ushort)((ushort)(high << 8) | low);
             return 0;
         }
+
+        /// <summary>
+        /// Absolute, x-indexed.
+        /// </summary>
+        /// <returns></returns>
+        public byte AM_ABX()
+        {
+            _isAMImplied = false;
+            ushort low = Read(_pc_Register);
+            _pc_Register++;
+            ushort high = Read(_pc_Register);
+            _pc_Register++;
+
+            _operand_Address = (ushort)((ushort)(high << 8) | low);
+            _operand_Address += _x_Register;
+
+            // Check if a page boundary is passed.
+            // If a boundary is passed then an additional cycle is needed for instruction.
+            if((ushort)(_operand_Address & 0xff00) != (ushort)(high << 8))
+            {
+                return 1;
+            }
+            return 0;
+        }
+
+        /// <summary>
+        /// Absolute, y-indexed.
+        /// </summary>
+        /// <returns></returns>
         public byte AM_ABY()
         {
             _isAMImplied = false;
-            throw new NotImplementedException();
+            ushort low = Read(_pc_Register);
+            _pc_Register++;
+            ushort high = Read(_pc_Register);
+            _pc_Register++;
+
+            _operand_Address = (ushort)((ushort)(high << 8) | low);
+            _operand_Address += _y_Register;
+
+            // Check if a page boundary is passed.
+            // If a boundary is passed then an additional cycle is needed for instruction.
+            if ((ushort)(_operand_Address & 0xff00) != (ushort)(high << 8))
+            {
+                return 1;
+            }
+            return 0;
         }
         public byte AM_IZX()
         {
             _isAMImplied = false;
-            throw new NotImplementedException();
-        }
-        public byte AM_ZPX()
-        {
-            _isAMImplied = false;
-            _isAMImplied = false; 
             throw new NotImplementedException();
         }
         public byte AM_REL()
@@ -228,15 +284,32 @@ namespace NES_Emulator.Core
             _isAMImplied = false;
             throw new NotImplementedException();
         }
-        public byte AM_ABX()
-        {
-            _isAMImplied = false;
-            throw new NotImplementedException();
-        }
+
+        /// <summary>
+        /// Indirect. 
+        /// Operand is address; effective address is contents of word at address.
+        /// </summary>
+        /// <returns></returns>
         public byte AM_IND()
         {
             _isAMImplied = false;
-            throw new NotImplementedException();
+            ushort low = Read(_pc_Register);
+            _pc_Register++;
+            ushort high = Read(_pc_Register);
+            _pc_Register++;
+
+            ushort address = (ushort)((ushort)(high << 8) | low);
+
+            if(low == 0x00ff)
+            {
+                _operand_Address = (ushort)(Read((ushort)(address & 0xff00)) << 8 | Read(address));
+            }
+            else
+            {
+                _operand_Address = (ushort)(Read((ushort)(address + 1)) << 8 | Read(address));
+            }
+
+            return 0;
         }
         public byte AM_IZY()
         {
