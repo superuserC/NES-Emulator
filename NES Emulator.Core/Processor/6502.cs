@@ -50,7 +50,7 @@ namespace NES_Emulator.Core.Processor
         /// Register addressing range from 0x0100 to 0x01ff.
         /// This register allocates his 256 bytes of memory from top to bottom.
         /// </summary>
-        public ushort _sp_Register { get; private set; } = 0x01ff;
+        public byte _sp_Register { get; private set; } = 0xff;
 
         /// <summary>
         /// Program counter
@@ -166,7 +166,7 @@ namespace NES_Emulator.Core.Processor
         public void PushToStack(byte value)
         {
             _sp_Register--;
-            Write(_sp_Register, value);
+            Write(_sp_Register.OR(0x0100), value);
         }
 
         /// <summary>
@@ -175,7 +175,7 @@ namespace NES_Emulator.Core.Processor
         /// <returns></returns>
         public byte PopFromStack()
         {
-            byte tmp = Read(_sp_Register);
+            byte tmp = Read(_sp_Register.OR(0x0100));
             _sp_Register++;
             return tmp;
         }

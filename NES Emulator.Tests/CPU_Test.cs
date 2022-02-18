@@ -1,32 +1,24 @@
 ﻿using AutoFixture;
 using FluentAssertions;
-using Moq;
-using NES_Emulator.Core;
 using NES_Emulator.Core.Extensions;
 using NES_Emulator.Core.Interfaces;
-using NES_Emulator.Tests.Helper;
+using NES_Emulator.Core.Processor;
 using NSubstitute;
 using NUnit.Framework;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NES_Emulator.Tests
 {
     public class CPU_Test
     {
         private Fixture _fixture;
-        private Mock<IDataTransfer> _mockDataTransfer;
+        private IDataTransfer _dataTransfer;
 
         [SetUp]
         public void Setup()
         {
             _fixture = new Fixture();
-            _mockDataTransfer = MockDataTransferHelper.GetMock();
-
-
+            _dataTransfer = Substitute.For<IDataTransfer>();
         }
 
         /// <summary>
@@ -39,8 +31,8 @@ namespace NES_Emulator.Tests
             _6502 cpu = GetInstance();
 
             cpu.Read(address);
-
-            _mockDataTransfer.Verify(mock => mock.Read(It.Is<ushort>(x => x == address)), Times.Once);
+        
+            _dataTransfer.Received().Read(address);
         }
 
         /// <summary>
@@ -55,7 +47,7 @@ namespace NES_Emulator.Tests
 
             cpu.Write(address, data);
 
-            _mockDataTransfer.Verify(mock => mock.Write(It.Is<ushort>(x => x == address), It.Is<byte>(x => x == data)), Times.Once);
+            _dataTransfer.Received().Write(address, data);
         }
 
         /// <summary>
@@ -90,7 +82,7 @@ namespace NES_Emulator.Tests
         /// Check constructor throws NullArgumentException when DataTransfer is null.
         /// </summary>
         [Test]
-        public void Constructor_ThrowNullArgumentExceptione_When_DataTransferIsNull()
+        public void Constructor_ThrowArgumentNullExceptione_When_DataTransferIsNull()
         {
             Assert.Throws<ArgumentNullException>(() => new _6502(null));
         }
@@ -162,11 +154,6 @@ namespace NES_Emulator.Tests
             result.Should().Be(0);
         }
 
-        private _6502 GetInstance()
-        {
-            return new _6502(_mockDataTransfer.Object);
-        }
-
-
+        private _6502 GetInstance() => new _6502(_dataTransfer);
     }
 }
