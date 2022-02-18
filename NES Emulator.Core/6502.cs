@@ -274,11 +274,7 @@ namespace NES_Emulator.Core
             }
             return 0;
         }
-        public byte AM_IZX()
-        {
-            _isAMImplied = false;
-            throw new NotImplementedException();
-        }
+       
         public byte AM_REL()
         {
             _isAMImplied = false;
@@ -302,6 +298,7 @@ namespace NES_Emulator.Core
 
             if(low == 0x00ff)
             {
+                // if we increment by 1 we will got to next page.
                 _operand_Address = (ushort)(Read((ushort)(address & 0xff00)) << 8 | Read(address));
             }
             else
@@ -311,10 +308,41 @@ namespace NES_Emulator.Core
 
             return 0;
         }
+
+        /// <summary>
+        /// Indirect, x-indexed.
+        /// </summary>
+        /// <returns></returns>
+        public byte AM_IZX()
+        {
+            _isAMImplied = false;
+            byte low = Read(_pc_Register);
+            _pc_Register++;
+
+            byte indLow = Read((ushort)((low & 0x00ff) + _x_Register));
+            byte indHigh = Read((ushort)((low & 0x00ff) + _x_Register  + 1));
+
+            _operand_Address = (ushort)((indHigh << 8) | (indLow & 0x00ff));
+            return 0;
+
+        }
+
+        /// <summary>
+        /// Indirect, y-indexed.
+        /// </summary>
+        /// <returns></returns>
         public byte AM_IZY()
         {
             _isAMImplied = false;
-            throw new NotImplementedException();
+            byte low = Read(_pc_Register);
+            _pc_Register++;
+
+            byte indLow = Read((ushort)((low & 0x00ff)));
+            byte indHigh = Read((ushort)((low & 0x00ff) + 1));
+
+            _operand_Address = (ushort)((indHigh << 8) | (indLow & 0x00ff));
+            _operand_Address += _y_Register;
+            return 0;
         }
         public byte AM_XXX()
         {
