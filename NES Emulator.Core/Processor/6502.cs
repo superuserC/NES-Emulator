@@ -80,12 +80,12 @@ namespace NES_Emulator.Core.Processor
         /// <summary>
         /// Represent the instruction set operand;
         /// </summary>
-        public ushort _operand_Address { get; private set; } = 0x0000;
+        public ushort _operand_Address { get; set; } = 0x0000;
 
         /// <summary>
         /// Represents the the actual value of the operand for the given <see cref="_operand_Address"/>.
         /// </summary>
-        public byte _operand_Value { get; private set; } = 0x00;
+        public byte _operand_Value { get; set; } = 0x00;
 
         /// <summary>
         /// Defines if addressing mode is implied.
