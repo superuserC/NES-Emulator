@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NES_Emulator.Core.Processor;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -91,6 +92,5 @@ namespace NES_Emulator.Core.Extensions
         /// <param name="value"></param>
         /// <returns></returns>
         public static byte SL(this byte value) => (byte)(value << value);
-
     }
 }
