@@ -46,16 +46,16 @@ namespace NES_Emulator.Core.Processor
         /// <summary>
         /// See processor sheet.
         /// </summary>
-        public void IRQ() { }
+        public void IRQ() => throw new NotImplementedException();
 
         /// <summary>
         /// See processor sheet.
         /// </summary>
-        public void NMI() { }
+        public void NMI() => throw new NotImplementedException();
 
         /// <summary>
         /// See processor sheet.
         /// </summary>
-        public void Reset() { }
+        public void Reset() => throw new NotImplementedException();
     }
 }
