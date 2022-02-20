@@ -42,8 +42,8 @@ namespace NES_Emulator.Core.Processor
         /// </summary>
         public byte _acc_Register { get; private set; } = 0x00;
 
-        public byte _x_Register { get; private set; } = 0x00;
-        public byte _y_Register { get; private set; } = 0x00;
+        public byte _x_Register { get; set; } = 0x00;
+        public byte _y_Register { get; set; } = 0x00;
 
         /// <summary>
         /// Stack pointer

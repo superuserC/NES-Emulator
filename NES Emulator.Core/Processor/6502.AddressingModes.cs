@@ -174,7 +174,7 @@ namespace NES_Emulator.Core.Processor
         }
 
         /// <summary>
-        /// Indirect, x-indexed.
+        /// Indirect, x-indexed (without carry)
         /// </summary>
         /// <returns></returns>
         public byte AM_IZX()
@@ -192,7 +192,7 @@ namespace NES_Emulator.Core.Processor
         }
 
         /// <summary>
-        /// Indirect, y-indexed.
+        /// Indirect, y-indexed. (with carry)
         /// </summary>
         /// <returns></returns>
         public byte AM_IZY()
