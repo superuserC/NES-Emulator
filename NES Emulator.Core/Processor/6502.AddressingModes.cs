@@ -142,7 +142,11 @@ namespace NES_Emulator.Core.Processor
         public byte AM_REL()
         {
             _isAMImplied = false;
-            throw new NotImplementedException();
+            byte op = Read(_pc_Register);
+            _pc_Register++;
+            sbyte offset = (sbyte)op;
+            _operand_Address = (ushort)(_pc_Register + offset);
+            return 0;
         }
 
         /// <summary>
@@ -206,6 +210,12 @@ namespace NES_Emulator.Core.Processor
 
             _operand_Address = (ushort)((indHigh << 8) | (indLow & 0x00ff));
             _operand_Address += _y_Register;
+
+            if((indHigh << 8) != (_operand_Address & 0xff00))
+            {
+                return 1;
+            }
+
             return 0;
         }
 

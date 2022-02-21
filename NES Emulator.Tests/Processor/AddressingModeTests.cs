@@ -123,7 +123,7 @@ namespace NES_Emulator.Tests.Processor
         [TestCase((byte)0x23, (byte)0xac, (byte)0xf3, (ushort)0xad16, true)]
         [TestCase((byte)0x00, (byte)0x00, (byte)0xf3, (ushort)0x00f3, false)]
         [TestCase((byte)0x01, (byte)0x00, (byte)0xff, (ushort)0x0100, true)]
-        public void AM_ABY_Test(byte low, byte high, byte yRegister, ushort address, bool pagePassed)
+        public void AM_ABY_Test(byte low, byte high, byte yRegister, ushort address, bool pageCrossed)
         {
             var processor = GetInstance();
             _dataTransfer.Read(0x0000).Returns(low);
@@ -133,7 +133,7 @@ namespace NES_Emulator.Tests.Processor
             var cycles = processor.AM_ABY();
 
             processor._operand_Address.Should().Be(address);
-            cycles.Should().Be((byte)(pagePassed ? 1 : 0));
+            cycles.Should().Be((byte)(pageCrossed ? 1 : 0));
         }
 
         [TestCase((byte)0x25, (byte)0x04, (ushort)0xac18)]
@@ -145,24 +145,46 @@ namespace NES_Emulator.Tests.Processor
             _dataTransfer.Read(0x002a).Returns((byte)0xac);
             processor._x_Register = xRegister;
 
-            processor.AM_IZX();
+            byte cycles = processor.AM_IZX();
 
             processor._operand_Address.Should().Be(address);
+            cycles.Should().Be(0);
         }
 
-        [TestCase((byte)0x25, (byte)0x04, (ushort)0x0205)]
-        public void AM_IZY_Test(byte low, byte yRegister, ushort address)
+        [TestCase((byte)0x01, (byte)0x02, (byte)0x04, (ushort)0x0205, false)]
+        [TestCase((byte)0x01, (byte)0x02, (byte)0xff, (ushort)0x0300, true)]
+        [TestCase((byte)0x00, (byte)0x00, (byte)0xff, (ushort)0x00ff, false)]
+        [TestCase((byte)0x00, (byte)0xff, (byte)0xff, (ushort)0xffff, false)]
+        [TestCase((byte)0xff, (byte)0x00, (byte)0xff, (ushort)0x01fe, true)]
+        [TestCase((byte)0x00, (byte)0x00, (byte)0x00, (ushort)0x0000, false)]
+        public void AM_IZY_Test(byte low, byte high, byte yRegister, ushort address, bool pageCrossed)
         {
             var processor = GetInstance();
-            _dataTransfer.Read(0x0000).Returns(low);
-            _dataTransfer.Read(0x0025).Returns((byte)0x01);
-            _dataTransfer.Read(0x0026).Returns((byte)0x02);
+             byte tmpData = 0x25;
+            _dataTransfer.Read(0x0000).Returns(tmpData);
+            _dataTransfer.Read((ushort)(tmpData & 0x00ff)).Returns(low);
+            _dataTransfer.Read((ushort)((tmpData & 0x00ff) + 1)).Returns(high);
             processor._y_Register = yRegister;
 
-            processor.AM_IZY();
+            byte cycles = processor.AM_IZY();
 
             processor._operand_Address.Should().Be(address);
+            cycles.Should().Be((byte)(pageCrossed ? 1 : 0));
         }
+
+        [TestCase((byte)0x05, (ushort)0x0006)]
+        [TestCase((byte)0xff, (ushort)0x0000)]
+        public void AM_REL_Test(byte op, ushort address)
+        {
+            var processor = GetInstance();
+            _dataTransfer.Read(0x0000).Returns(op);
+
+            byte cycles = processor.AM_REL();
+
+            processor._operand_Address.Should().Be(address);
+            cycles.Should().Be(0);
+        }
+
         private _6502 GetInstance() => new _6502(_dataTransfer);
     }
 }
