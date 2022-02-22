@@ -4,10 +4,11 @@ using NES_Emulator.Core.Interfaces;
 using NES_Emulator.Core.Processor;
 using NSubstitute;
 using NUnit.Framework;
+using System;
 
 namespace NES_Emulator.Tests.Processor
 {
-    public class AddressingModeTests
+    public class AddressingModesTests
     {
         private Fixture _fixture;
         private IDataTransfer _dataTransfer;
@@ -174,6 +175,7 @@ namespace NES_Emulator.Tests.Processor
 
         [TestCase((byte)0x05, (ushort)0x0006)]
         [TestCase((byte)0xff, (ushort)0x0000)]
+        [TestCase((byte)0xfb, (ushort)0xfffc)]
         public void AM_REL_Test(byte op, ushort address)
         {
             var processor = GetInstance();
@@ -183,6 +185,14 @@ namespace NES_Emulator.Tests.Processor
 
             processor._operand_Address.Should().Be(address);
             cycles.Should().Be(0);
+        }
+
+        [Test]
+        public void AM_XXX_Test()
+        {
+            var processor = GetInstance();
+            Action action = () => processor.AM_XXX();
+            action.Should().Throw<NotImplementedException>();
         }
 
         private _6502 GetInstance() => new _6502(_dataTransfer);

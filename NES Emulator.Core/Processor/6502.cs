@@ -40,7 +40,7 @@ namespace NES_Emulator.Core.Processor
         /// <summary>
         /// Accumulator
         /// </summary>
-        public byte _acc_Register { get; private set; } = 0x00;
+        public byte _acc_Register { get; set; } = 0x00;
 
         public byte _x_Register { get; set; } = 0x00;
         public byte _y_Register { get; set; } = 0x00;
@@ -50,17 +50,17 @@ namespace NES_Emulator.Core.Processor
         /// Register addressing range from 0x0100 to 0x01ff.
         /// This register allocates his 256 bytes of memory from top to bottom.
         /// </summary>
-        public byte _sp_Register { get; private set; } = 0xff;
+        public byte _sp_Register { get; set; } = 0xff;
 
         /// <summary>
         /// Program counter
         /// </summary>
-        public ushort _pc_Register { get; private set; } = 0x0000;
+        public ushort _pc_Register { get; set; } = 0x0000;
 
         /// <summary>
         /// Flags
         /// </summary>
-        public byte _status_Register { get; private set; } = 0x00;
+        public byte _status_Register { get; set; } = 0x00;
 
         /// <summary>
         /// The mapping of the processor instruction set with the insttuction implementation.
@@ -75,7 +75,7 @@ namespace NES_Emulator.Core.Processor
         /// <summary>
         /// Represents the current processor instruction code.
         /// </summary>
-        public byte _opcode { get; private set; } = 0x00;
+        public byte _opcode { get; set; } = 0x00;
 
         /// <summary>
         /// Represent the instruction set operand;
@@ -90,7 +90,7 @@ namespace NES_Emulator.Core.Processor
         /// <summary>
         /// Defines if addressing mode is implied.
         /// </summary>
-        public bool _isAMImplied { get; private set; } = false;
+        public bool _isAMImplied { get; set; } = false;
 
         /// <summary>
         /// Write data to the bus.
