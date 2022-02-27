@@ -194,6 +194,91 @@ namespace NES_Emulator.Tests.Processor
             processor._acc_Register.Should().Be(expectedValue);
             processor._status_Register.Should().Be(finalStatusRegister);
         }
+
+        [TestCase((byte)0b11111111, (byte)0b11111110)]
+        [TestCase((byte)0b11111110, (byte)0b11111110)]
+        [TestCase((byte)0b00000001, (byte)0b00000000)]
+        public void CLC_Test(byte initialStatusRegister, byte finalStatusRegister)
+        {
+            var processor = GetInstance();
+            processor._status_Register = initialStatusRegister;
+
+            processor.CLC();
+
+            processor._status_Register.Should().Be(finalStatusRegister);
+        }
+
+        [TestCase((byte)0xff, (byte)0x05, (byte)0b01111111, (byte)0b11111101)]
+        [TestCase((byte)0xff, (byte)0xff, (byte)0b11111100, (byte)0b01111111)]
+        [TestCase((byte)0x01, (byte)0xff, (byte)0b11111111, (byte)0b01111100)]
+        public void CMP_Test(byte accRegister, byte data, byte initialStatusRegister, byte finalStatusRegister)
+        {
+            var processor = GetInstance();
+            processor._acc_Register = accRegister;
+            processor._operand_Value = data;
+            processor._status_Register = initialStatusRegister;
+
+            processor.CMP();
+
+            processor._status_Register.Should().Be(finalStatusRegister);
+
+        }
+
+        [TestCase((byte)10, (byte)9, (byte)0b11111111, (byte)0b01111101)]
+        [TestCase((byte)0, (byte)0xff, (byte)0b01111111, (byte)0b11111101)]
+        [TestCase((byte)1, (byte)0, (byte)0b11111101, (byte)0b01111111)]
+        public void DEX_Test(byte initialXRegister, byte finalXRegister, byte initialStatusRegister, byte finalStatusRegister)
+        {
+            var processor = GetInstance();
+            processor._x_Register = initialXRegister;
+            processor._status_Register = initialStatusRegister;
+
+            processor.DEX();
+
+            processor._x_Register.Should().Be(finalXRegister);
+            processor._status_Register.Should().Be(finalStatusRegister);
+        }
+
+        [TestCase((byte)10, (byte)11, (byte)0b11111111, (byte)0b01111101)]
+        [TestCase((byte)0xfe, (byte)0xff, (byte)0b01111111, (byte)0b11111101)]
+        [TestCase((byte)0xff, (byte)0, (byte)0b11111101, (byte)0b01111111)]
+        public void INX_Test(byte initialXRegister, byte finalXRegister, byte initialStatusRegister, byte finalStatusRegister)
+        {
+            var processor = GetInstance();
+            processor._x_Register = initialXRegister;
+            processor._status_Register = initialStatusRegister;
+
+            processor.INX();
+
+            processor._x_Register.Should().Be(finalXRegister);
+            processor._status_Register.Should().Be(finalStatusRegister);
+        }
+
+        [TestCase((byte)0, (byte)0xff, (byte)0b01111111, (byte)0b11111101)]
+        [TestCase((byte)10, (byte)0, (byte)0b01111101, (byte)0b01111111)]
+        public void LDA_Test(byte initialAccRegister, byte data, byte initialStatusRegister, byte finalStatusRegister)
+        {
+            var processor = GetInstance();
+            processor._acc_Register = initialAccRegister;
+            processor._operand_Value = data;
+            processor._status_Register = initialStatusRegister;
+
+            processor.LDA();
+
+            processor._acc_Register.Should().Be(data);
+            processor._status_Register.Should().Be(finalStatusRegister);
+        }
+
+        [Test]
+        public void NOP_Test()
+        {
+            var processor = GetInstance();
+
+            var cycles = processor.NOP();
+
+            cycles.Should().Be(0);
+        }
+
         private _6502 GetInstance() => new _6502(_dataTransfer);
     }
 }

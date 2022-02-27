@@ -192,6 +192,7 @@ namespace NES_Emulator.Core.Processor
             }
             else if (_acc_Register == _operand_Value)
             {
+                ClearFlag(Flags6502.Negative);
                 SetFlag(Flags6502.Zero);
                 SetFlag(Flags6502.Carry);
             }
