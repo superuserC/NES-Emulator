@@ -162,6 +162,38 @@ namespace NES_Emulator.Tests.Processor
             processor.DataTransfer.Received(1).Write(processor._operand_Address, processor._x_Register);
         }
 
+        [TestCase((byte)0xff, (byte)0b00000000, (byte)0b10000000)]
+        [TestCase((byte)0xff, (byte)0b00000010, (byte)0b10000000)]
+        [TestCase((byte)0xff, (byte)0b00100010, (byte)0b10100000)]
+        [TestCase((byte)0x00, (byte)0b00000000, (byte)0b00000010)]
+        [TestCase((byte)0x00, (byte)0b11111101, (byte)0b01111111)]
+        [TestCase((byte)0x00, (byte)0b11111111, (byte)0b01111111)]
+        public void TSX_Test(byte spRegister, byte initialStatusRegister, byte finalStatusRegister)
+        {
+            var processor = GetInstance();
+            processor._sp_Register = spRegister;
+            processor._status_Register = initialStatusRegister;
+
+            processor.TSX();
+
+            processor._x_Register.Should().Be(spRegister);
+            processor._status_Register.Should().Be(finalStatusRegister);
+        }
+
+        [TestCase((byte)0b10101010, (byte)0b01010101, (byte)0, (byte)0b00000000, (byte)0b00000010)]
+        [TestCase((byte)0b10101010, (byte)0b11010101, (byte)0b10000000, (byte)0b00000000, (byte)0b10000000)]
+        public void AND_Test(byte accRegister, byte memory, byte expectedValue, byte initialStatusRegister, byte finalStatusRegister)
+        {
+            var processor = GetInstance();
+            processor._acc_Register = accRegister;
+            processor._operand_Value = memory;
+            processor._status_Register = initialStatusRegister;
+
+            processor.AND();
+
+            processor._acc_Register.Should().Be(expectedValue);
+            processor._status_Register.Should().Be(finalStatusRegister);
+        }
         private _6502 GetInstance() => new _6502(_dataTransfer);
     }
 }
