@@ -165,8 +165,9 @@ namespace NES_Emulator.Core.Processor
         /// <param name="value"></param>
         public void PushToStack(byte value)
         {
+            ushort spPage = 0x0100;
             _sp_Register--;
-            Write(_sp_Register.OR(0x0100), value);
+            Write(spPage.OR(_sp_Register), value);
         }
 
         /// <summary>
@@ -175,7 +176,8 @@ namespace NES_Emulator.Core.Processor
         /// <returns></returns>
         public byte PopFromStack()
         {
-            byte tmp = Read(_sp_Register.OR(0x0100));
+            ushort spPage = 0x0100;
+            byte tmp = Read(spPage.OR(_sp_Register));
             _sp_Register++;
             return tmp;
         }

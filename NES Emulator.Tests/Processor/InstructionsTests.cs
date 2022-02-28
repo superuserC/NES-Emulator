@@ -98,7 +98,7 @@ namespace NES_Emulator.Tests.Processor
 
             processor.PHP();
 
-            processor.DataTransfer.Received(1).Write(processor._sp_Register.OR(0x0100), finalStatusRegister);
+            processor.DataTransfer.Received(1).Write(((ushort)(0x0100)).OR(processor._sp_Register), finalStatusRegister);
         }
 
         [TestCase((byte)0b11110011, (byte)0b11110010, (byte)0b10101010, (byte)0b11010101)]
@@ -277,6 +277,36 @@ namespace NES_Emulator.Tests.Processor
             var cycles = processor.NOP();
 
             cycles.Should().Be(0);
+        }
+
+        [TestCase((byte)0xff, (byte)0b00001111, (byte)0b10001101)]
+        [TestCase((byte)0x00, (byte)0b10001101, (byte)0b00001111)]
+        public void PLA_Test(byte data, byte initialStatusRegister, byte finalStatusRegister)
+        {
+            var processor = GetInstance();
+            processor._status_Register = initialStatusRegister;
+            processor.DataTransfer.Read(Arg.Any<ushort>()).Returns(data);
+
+            processor.PLA();
+
+            processor._acc_Register.Should().Be(data);
+            processor._status_Register.Should().Be(finalStatusRegister);
+        }
+
+        [TestCase((byte)0b11111111, (byte)0xf5, (byte)0b11001111)]
+        public void RTI_Test(byte stackFirst, byte stackSecond, byte finalStatusRegister)
+        {
+            var processor = GetInstance();
+            processor._sp_Register = 0xf0;
+            processor.DataTransfer.Read(0x01f0).Returns(stackFirst);
+            processor.DataTransfer.Read(0x01f1).Returns(stackSecond);
+            processor._status_Register = 0b00000000;
+
+            processor.RTI();
+
+            processor._status_Register.Should().Be(finalStatusRegister);
+            processor._pc_Register.Should().Be(stackSecond);
+
         }
 
         private _6502 GetInstance() => new _6502(_dataTransfer);
