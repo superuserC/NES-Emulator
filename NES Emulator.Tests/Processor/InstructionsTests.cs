@@ -550,6 +550,68 @@ namespace NES_Emulator.Tests.Processor
             processor._status_Register.Should().Be(finalStatusRegister);
         }
 
+        [TestCase((byte)10, (byte)9, (byte)0b00000010, (byte)0b00000001)]
+        [TestCase((byte)255, (byte)1, (byte)0b00000010, (byte)0b10000001)]
+        [TestCase((byte)10, (byte)10, (byte)0b00000000, (byte)0b00000011)]
+        [TestCase((byte)10, (byte)11, (byte)0b00000011, (byte)0b10000000)]
+        [TestCase((byte)1, (byte)255, (byte)0b10000011, (byte)0b00000000)]
+        public void CPY_Test(byte yRegister, byte opValue, byte initialStatusRegister, byte finalStatusRegister)
+        {
+            var processor = GetInstance();
+            processor._y_Register = yRegister;
+            processor._operand_Value = opValue;
+            processor._status_Register = initialStatusRegister;
+
+            processor.CPY();
+
+            processor._status_Register.Should().Be(finalStatusRegister);
+        }
+
+        [TestCase((byte)0b11111111, (byte)0b11111111, (byte)0b00000000, (byte)0b10000000, (byte)0b00000010)]
+        [TestCase((byte)0b11111111, (byte)0b01111111, (byte)0b10000000, (byte)0b00000010, (byte)0b10000000)]
+        [TestCase((byte)0b00000000, (byte)0b00000000, (byte)0b00000000, (byte)0b10000000, (byte)0b00000010)]
+        public void EOR_Test(byte accRegister, byte opValue, byte expectedAccRegister, byte initialStatusRegister, byte finalStatusRegister)
+        {
+            var processor = GetInstance();
+            processor._status_Register = initialStatusRegister;
+            processor._acc_Register = accRegister;
+            processor._operand_Value = opValue;
+
+            processor.EOR();
+
+            processor._status_Register.Should().Be(finalStatusRegister);
+            processor._acc_Register.Should().Be(expectedAccRegister);
+        }
+
+        [TestCase((byte)0, (byte)0b10000000, (byte)0b00000010)]
+        [TestCase((byte)255, (byte)0b00000010, (byte)0b10000000)]
+        public void LDY_Test(byte opValue, byte initialStatusRegister, byte finalStatusRegister)
+        {
+            var processor = GetInstance();
+            processor._y_Register = _fixture.Create<byte>();
+            processor._operand_Value = opValue;
+            processor._status_Register = initialStatusRegister;
+
+            processor.LDY();
+
+            processor._y_Register.Should().Be(opValue);
+            processor._status_Register.Should().Be(finalStatusRegister);
+        }
+
+        [Test]
+        public void PHA_Test()
+        {
+            var processor = GetInstance();
+            var accRegister = _fixture.Create<byte>();
+            byte stackRegister = 0x04;
+            processor._acc_Register = accRegister;
+            processor._sp_Register = stackRegister;
+
+            processor.PHA();
+
+            processor.DataTransfer.Received(1).Write(0x0103, accRegister);
+        }
+
         private _6502 GetInstance() => new _6502(_dataTransfer);
     }
 }
