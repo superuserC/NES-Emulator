@@ -99,6 +99,68 @@ namespace NES_Emulator.Tests.Processor
             processor.DataTransfer.Received(1).Write(address, data);
         }
 
+        [TestCase((byte)0b00000000, Flags6502.Negative, (byte)0b10000000)]
+        [TestCase((byte)0b00000000, Flags6502.Overflow, (byte)0b01000000)]
+        [TestCase((byte)0b00000000, Flags6502.Unused, (byte)0b00100000)]
+        [TestCase((byte)0b00000000, Flags6502.Break, (byte)0b00010000)]
+        [TestCase((byte)0b00000000, Flags6502.DecimalMode, (byte)0b00001000)]
+        [TestCase((byte)0b00000000, Flags6502.IRQDisable, (byte)0b00000100)]
+        [TestCase((byte)0b00000000, Flags6502.Zero, (byte)0b00000010)]
+        [TestCase((byte)0b00000000, Flags6502.Carry, (byte)0b00000001)]
+        public void Test_SetFlag(byte initialStatusRegister, Flags6502 flag, byte finalStatusRegister)
+        {
+            var processor = GetInstance();
+            processor._status_Register = initialStatusRegister;
+
+            processor.SetFlag(flag);
+
+            processor._status_Register.Should().Be(finalStatusRegister);
+        }
+
+        [TestCase((byte)0b00000000, Flags6502.Negative, true, (byte)0b10000000)]
+        [TestCase((byte)0b00000000, Flags6502.Overflow, true, (byte)0b01000000)]
+        [TestCase((byte)0b00000000, Flags6502.Unused, true, (byte)0b00100000)]
+        [TestCase((byte)0b00000000, Flags6502.Break, true, (byte)0b00010000)]
+        [TestCase((byte)0b00000000, Flags6502.DecimalMode, true, (byte)0b00001000)]
+        [TestCase((byte)0b00000000, Flags6502.IRQDisable, true, (byte)0b00000100)]
+        [TestCase((byte)0b00000000, Flags6502.Zero, true, (byte)0b00000010)]
+        [TestCase((byte)0b00000000, Flags6502.Carry, true, (byte)0b00000001)]
+        [TestCase((byte)0b11111111, Flags6502.Negative, false, (byte)0b01111111)]
+        [TestCase((byte)0b11111111, Flags6502.Overflow, false, (byte)0b10111111)]
+        [TestCase((byte)0b11111111, Flags6502.Unused, false, (byte)0b11011111)]
+        [TestCase((byte)0b11111111, Flags6502.Break, false, (byte)0b11101111)]
+        [TestCase((byte)0b11111111, Flags6502.DecimalMode, false, (byte)0b11110111)]
+        [TestCase((byte)0b11111111, Flags6502.IRQDisable, false, (byte)0b11111011)]
+        [TestCase((byte)0b11111111, Flags6502.Zero, false, (byte)0b11111101)]
+        [TestCase((byte)0b11111111, Flags6502.Carry, false, (byte)0b11111110)]
+        public void Test_SetFlag_B(byte initialStatusRegister, Flags6502 flag, bool activate, byte finalStatusRegister)
+        {
+            var processor = GetInstance();
+            processor._status_Register = initialStatusRegister;
+
+            processor.SetFlag(flag, activate);
+
+            processor._status_Register.Should().Be(finalStatusRegister);
+        }
+
+        [TestCase((byte)0b11111111, Flags6502.Negative, (byte)0b01111111)]
+        [TestCase((byte)0b11111111, Flags6502.Overflow, (byte)0b10111111)]
+        [TestCase((byte)0b11111111, Flags6502.Unused, (byte)0b11011111)]
+        [TestCase((byte)0b11111111, Flags6502.Break, (byte)0b11101111)]
+        [TestCase((byte)0b11111111, Flags6502.DecimalMode, (byte)0b11110111)]
+        [TestCase((byte)0b11111111, Flags6502.IRQDisable, (byte)0b11111011)]
+        [TestCase((byte)0b11111111, Flags6502.Zero, (byte)0b11111101)]
+        [TestCase((byte)0b11111111, Flags6502.Carry, (byte)0b11111110)]
+        public void ClearFlag(byte initialStatusRegister, Flags6502 flag, byte finalStatusRegister)
+        {
+            var processor = GetInstance();
+            processor._status_Register = initialStatusRegister;
+
+            processor.ClearFlag(flag);
+
+            processor._status_Register.Should().Be(finalStatusRegister);
+        }
+
         public _6502 GetInstance() => new _6502(_dataTransfer);
     }
 }

@@ -309,7 +309,7 @@ namespace NES_Emulator.Core.Processor
         }
 
         /// <summary>
-        /// Sore index Y in memory.
+        /// Store index Y in memory.
         /// Y -> M
         /// </summary>
         /// <returns></returns>
@@ -328,7 +328,6 @@ namespace NES_Emulator.Core.Processor
         {
             _acc_Register = _x_Register;
             SetFlag(Flags6502.Negative, _acc_Register.IsNegative());
-            ClearFlag(Flags6502.Negative);
             SetFlag(Flags6502.Zero, _acc_Register.IsZero());
             return 0;
         }
@@ -339,12 +338,10 @@ namespace NES_Emulator.Core.Processor
         /// <returns></returns>
         public byte ASL()
         {
-
-            bool setCarryFlag = _operand_Value.IsNegative();
             byte tmp = (byte)(_operand_Value << 1);
             SetFlag(Flags6502.Negative, tmp.IsNegative());
             SetFlag(Flags6502.Zero, tmp.IsZero());
-            SetFlag(Flags6502.Carry, setCarryFlag);
+            SetFlag(Flags6502.Carry, _operand_Value.IsNegative());
             return 0;
         }
 
@@ -391,6 +388,7 @@ namespace NES_Emulator.Core.Processor
             {
                 SetFlag(Flags6502.Zero);
                 SetFlag(Flags6502.Carry);
+                ClearFlag(Flags6502.Negative);
             }
             else
             {
