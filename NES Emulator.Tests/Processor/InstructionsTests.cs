@@ -496,8 +496,8 @@ namespace NES_Emulator.Tests.Processor
 
         }
 
-        [TestCase((byte)0b00000000,(byte)0b00000100)]
-        [TestCase((byte)0b00000100,(byte)0b00000100)]
+        [TestCase((byte)0b00000000, (byte)0b00000100)]
+        [TestCase((byte)0b00000100, (byte)0b00000100)]
         public void SEI_Test(byte initialStatusRegister, byte finalStatusRegister)
         {
             var processor = GetInstance();
@@ -610,6 +610,89 @@ namespace NES_Emulator.Tests.Processor
             processor.PHA();
 
             processor.DataTransfer.Received(1).Write(0x0103, accRegister);
+        }
+
+        [TestCase((byte)0b11110000, (byte)0b00000000, (byte)0b00000001, (byte)0b11100000)]
+        [TestCase((byte)0b00000000, (byte)0b00000001, (byte)0b00000000, (byte)0b00000001)]
+        [TestCase((byte)0b10000000, (byte)0b00000001, (byte)0b00000001, (byte)0b00000001)]
+        [TestCase((byte)0b11111111, (byte)0b00000001, (byte)0b00000001, (byte)0b11111111)]
+        public void ROL_Test_Implied(byte opValue, byte initialStatusRegister, byte finalStatusRegister, byte expectedAccRegister)
+        {
+            var processor = GetInstance();
+            processor._status_Register = initialStatusRegister;
+            processor._operand_Value = opValue;
+            processor._acc_Register = _fixture.Create<byte>();
+            processor._isAMImplied = true;
+
+            processor.ROL();
+
+            processor._status_Register.Should().Be(finalStatusRegister);
+            processor._acc_Register.Should().Be(expectedAccRegister);
+            processor.DataTransfer.Received(0).Write(Arg.Any<ushort>(), Arg.Any<byte>());
+        }
+
+        [TestCase((byte)0b11110000, (byte)0b00000000, (byte)0b00000001, (byte)0b11100000)]
+        [TestCase((byte)0b00000000, (byte)0b00000001, (byte)0b00000000, (byte)0b00000001)]
+        [TestCase((byte)0b10000000, (byte)0b00000001, (byte)0b00000001, (byte)0b00000001)]
+        [TestCase((byte)0b11111111, (byte)0b00000001, (byte)0b00000001, (byte)0b11111111)]
+        public void ROL_Test_NotImplied(byte opValue, byte initialStatusRegister, byte finalStatusRegister, byte expectedValue)
+        {
+            var processor = GetInstance();
+            var initialAccRegister = _fixture.Create<byte>();
+            var initialOpAddress = _fixture.Create<ushort>();
+            processor._status_Register = initialStatusRegister;
+            processor._acc_Register = initialAccRegister;
+            processor._isAMImplied = false;
+            processor._operand_Value = opValue;
+            processor._operand_Address = initialOpAddress;
+
+            processor.ROL();
+
+            processor._status_Register.Should().Be(finalStatusRegister);
+            processor._acc_Register.Should().Be(initialAccRegister);
+            processor.DataTransfer.Received(1).Write(initialOpAddress, expectedValue);
+        }
+
+        [Test]
+        public void STA_Test()
+        {
+            var processor = GetInstance();
+            var opAddress = _fixture.Create<ushort>();
+            var accRegister = _fixture.Create<byte>();
+            processor._operand_Address = opAddress;
+            processor._acc_Register = accRegister;
+
+            processor.STA();
+
+            processor.DataTransfer.Received(1).Write(opAddress, accRegister);
+        }
+
+        [TestCase((byte)0b10000000, (byte)0b00000010, (byte)0b10000000)]
+        [TestCase((byte)0b00000000, (byte)0b10000000, (byte)0b00000010)]
+        public void TAY_Test(byte accRegister, byte initialStatusRegister, byte finalStatusRegister)
+        {
+            var processor = GetInstance();
+            processor._acc_Register = accRegister;
+            processor._status_Register = initialStatusRegister;
+
+            processor.TAY();
+
+            processor._y_Register.Should().Be(accRegister);
+            processor._status_Register.Should().Be(finalStatusRegister);
+        }
+
+        [TestCase((byte)0b10000000, (byte)0b00000010, (byte)0b10000000)]
+        [TestCase((byte)0b00000000, (byte)0b10000000, (byte)0b00000010)]
+        public void TYA_Test(byte yRegister, byte initialStatusRegister, byte finalStatusRegister)
+        {
+            var processor = GetInstance();
+            processor._y_Register = yRegister;
+            processor._status_Register = initialStatusRegister;
+
+            processor.TYA();
+
+            processor._acc_Register.Should().Be(yRegister);
+            processor._status_Register.Should().Be(finalStatusRegister);
         }
 
         private _6502 GetInstance() => new _6502(_dataTransfer);
