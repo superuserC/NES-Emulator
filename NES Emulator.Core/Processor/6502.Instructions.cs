@@ -5,7 +5,27 @@ namespace NES_Emulator.Core.Processor
 {
     public partial class _6502
     {
-        public byte ADC() { throw new NotImplementedException(); }
+        /// <summary>
+        /// Add with carry
+        /// Acc + M + C
+        /// C -> set if resutl > 255
+        /// N -> set if MSB = 1
+        /// Z -> set if result = 0
+        /// V -> set if MSB diff
+        /// </summary>
+        /// <returns></returns>
+        public byte ADC()
+        {
+            ushort sum = (ushort)((ushort)_acc_Register + (ushort)_operand_Value + (ushort)ReadStatusRegister(Flags6502.Carry));
+            byte result = (byte)sum;
+            SetFlag(Flags6502.Carry, sum > 0xff);
+            SetFlag(Flags6502.Zero, result == 0);
+            SetFlag(Flags6502.Negative, result.IsNegative());
+            SetFlag(Flags6502.Overflow, ((byte)(~(_operand_Value ^ _acc_Register)) & (byte)(result ^ _operand_Value) & 0x80) == 0x80);
+            _acc_Register = result;
+            return 0;
+        }
+
         public byte BCS() { throw new NotImplementedException(); }
         public byte BNE() { throw new NotImplementedException(); }
         public byte BVS() { throw new NotImplementedException(); }
