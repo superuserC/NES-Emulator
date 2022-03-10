@@ -545,7 +545,30 @@ namespace NES_Emulator.Core.Processor
             SetFlag(Flags6502.Zero, _sp_Register.IsZero());
             return 0;
         }
-        public byte BCC() { throw new NotImplementedException(); }
+
+        /// <summary>
+        /// Branch on Carry Clear
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public byte BCC()
+        {
+            byte cycles = 0;
+            if(ReadStatusRegister(Flags6502.Carry) == 0)
+            {
+                cycles++;
+                ushort newPC = (ushort)(_pc_Register + _offset);
+                if((newPC & 0xff00) != (_pc_Register & 0xff00))
+                {
+                    cycles++;
+                }
+
+                _pc_Register = newPC;
+            }
+
+            return cycles;
+        }
+
         public byte BMI() { throw new NotImplementedException(); }
         public byte BVC() { throw new NotImplementedException(); }
 

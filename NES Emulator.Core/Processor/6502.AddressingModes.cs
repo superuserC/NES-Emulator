@@ -142,10 +142,9 @@ namespace NES_Emulator.Core.Processor
         public byte AM_REL()
         {
             _isAMImplied = false;
-            byte op = Read(_pc_Register);
+            _offset = (sbyte)Read(_pc_Register);
             _pc_Register++;
-            sbyte offset = (sbyte)op;
-            _operand_Address = (ushort)(_pc_Register + offset);
+            //_operand_Address = (ushort)(_pc_Register + offset);
             return 0;
         }
 

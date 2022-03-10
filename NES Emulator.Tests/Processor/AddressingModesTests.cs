@@ -173,17 +173,17 @@ namespace NES_Emulator.Tests.Processor
             cycles.Should().Be((byte)(pageCrossed ? 1 : 0));
         }
 
-        [TestCase((byte)0x05, (ushort)0x0006)]
-        [TestCase((byte)0xff, (ushort)0x0000)]
-        [TestCase((byte)0xfb, (ushort)0xfffc)]
-        public void AM_REL_Test(byte op, ushort address)
+        [TestCase((byte)0x05)]
+        [TestCase((byte)0xff)]
+        [TestCase((byte)0xfb)]
+        public void AM_REL_Test(byte op)
         {
             var processor = GetInstance();
             _dataTransfer.Read(0x0000).Returns(op);
 
             byte cycles = processor.AM_REL();
 
-            processor._operand_Address.Should().Be(address);
+            processor._offset.Should().Be((sbyte)op);
             cycles.Should().Be(0);
         }
 

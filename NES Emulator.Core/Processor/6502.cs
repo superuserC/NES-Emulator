@@ -84,6 +84,11 @@ namespace NES_Emulator.Core.Processor
         public byte _operand_Value { get; set; } = 0x00;
 
         /// <summary>
+        /// Offset required for branch instruction.
+        /// </summary>
+        public sbyte _offset { get; set; } = 0x00;
+
+        /// <summary>
         /// Defines if addressing mode is implied.
         /// </summary>
         public bool _isAMImplied { get; set; } = false;

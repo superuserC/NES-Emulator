@@ -731,6 +731,22 @@ namespace NES_Emulator.Tests.Processor
             processor._status_Register.Should().Be(finalStatusRegister);
         }
 
+        [TestCase((ushort)0x00f0, (sbyte)0x05, (ushort)0x00f5, (byte)1)]
+        [TestCase((ushort)0x00ff, (sbyte)0x05, (ushort)0x0104, (byte)2)]
+        [TestCase((ushort)0x00ff, (sbyte)-1, (ushort)0x00fe, (byte)1)]
+        [TestCase((ushort)0x0100, (sbyte)-1, (ushort)0x00ff, (byte)2)]
+        public void BCC_Test(ushort pcRegister, sbyte offset, ushort expectedPcRegister, byte expectedCycles)
+        {
+            var processor = GetInstance();
+            processor._pc_Register = pcRegister;
+            processor._offset = offset;
+
+            var cycles = processor.BCC();
+
+            processor._pc_Register.Should().Be(expectedPcRegister);
+            cycles.Should().Be(expectedCycles);
+        }
+
         private _6502 GetInstance() => new _6502(_dataTransfer);
     }
 }
