@@ -655,7 +655,27 @@ namespace NES_Emulator.Core.Processor
         }
 
 
-        public byte SBC() { throw new NotImplementedException(); }
+        /// <summary>
+        /// A - M - ~C -> A
+        /// Note : this can be implemented as addition
+        /// A - M - ~C = A + (-M) - (1 - C)
+        ///            = A + (~M + 1) - 1 + C
+        ///            = A + ~M + C
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public byte SBC()
+        {
+            var tmp = (byte)~_operand_Value;
+            ushort sum = (ushort)((ushort)_acc_Register + (ushort)tmp + (ushort)ReadStatusRegister(Flags6502.Carry));
+            byte result = (byte)sum;
+            SetFlag(Flags6502.Carry, sum > 0xff);
+            SetFlag(Flags6502.Zero, result == 0);
+            SetFlag(Flags6502.Negative, result.IsNegative());
+            SetFlag(Flags6502.Overflow, ((byte)(~(tmp ^ _acc_Register)) & (byte)(result ^ tmp) & 0x80) == 0x80);
+            _acc_Register = result;
+            return 0;
+        }
 
         /// <summary>
         /// Store accumulator in memory.

@@ -713,6 +713,24 @@ namespace NES_Emulator.Tests.Processor
             processor._status_Register.Should().Be(finalStatusRegister);
         }
 
+        [TestCase((byte)0b00000000, (byte)0b11111110, (byte)0b00000001, (byte)0b00000000, (byte)0b00000010)]
+        [TestCase((byte)0b00000000, (byte)0b01111110, (byte)0b00000001, (byte)0b10000000, (byte)0b10000010)]
+        [TestCase((byte)0b01111111, (byte)0b10000000, (byte)0b00000001, (byte)0b11000000, (byte)0b11111111)]
+        [TestCase((byte)0b10000000, (byte)0b01111110, (byte)0b00000001, (byte)0b01000001, (byte)0b00000010)]
+        [TestCase((byte)0b00000001, (byte)0b00000000, (byte)0b00000000, (byte)0b00000011, (byte)0b00000000)]
+        public void SBC_Test(byte accRegister, byte opValue, byte initialStatusRegister, byte finalStatusRegister, byte expectedAccRegister)
+        {
+            var processor = GetInstance();
+            processor._acc_Register = accRegister;
+            processor._operand_Value = opValue;
+            processor._status_Register = initialStatusRegister;
+
+            processor.SBC();
+
+            processor._acc_Register.Should().Be(expectedAccRegister);
+            processor._status_Register.Should().Be(finalStatusRegister);
+        }
+
         private _6502 GetInstance() => new _6502(_dataTransfer);
     }
 }
