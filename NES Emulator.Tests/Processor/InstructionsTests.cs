@@ -731,17 +731,73 @@ namespace NES_Emulator.Tests.Processor
             processor._status_Register.Should().Be(finalStatusRegister);
         }
 
-        [TestCase((ushort)0x00f0, (sbyte)0x05, (ushort)0x00f5, (byte)1)]
-        [TestCase((ushort)0x00ff, (sbyte)0x05, (ushort)0x0104, (byte)2)]
-        [TestCase((ushort)0x00ff, (sbyte)-1, (ushort)0x00fe, (byte)1)]
-        [TestCase((ushort)0x0100, (sbyte)-1, (ushort)0x00ff, (byte)2)]
-        public void BCC_Test(ushort pcRegister, sbyte offset, ushort expectedPcRegister, byte expectedCycles)
+        [TestCase((ushort)0x00f0, (sbyte)0x05, (byte)0b00000000, (ushort)0x00f5, (byte)1)]
+        [TestCase((ushort)0x00ff, (sbyte)0x05, (byte)0b00000000, (ushort)0x0104, (byte)2)]
+        [TestCase((ushort)0x00ff, (sbyte)-1, (byte)0b00000000, (ushort)0x00fe, (byte)1)]
+        [TestCase((ushort)0x0100, (sbyte)-1, (byte)0b00000000, (ushort)0x00ff, (byte)2)]
+        [TestCase((ushort)0x0100, (sbyte)-1, (byte)0b0000001, (ushort)0x0100, (byte)0)]
+        public void BCC_Test(ushort pcRegister, sbyte offset, byte initialStatusRegister ,ushort expectedPcRegister, byte expectedCycles)
         {
             var processor = GetInstance();
             processor._pc_Register = pcRegister;
             processor._offset = offset;
+            processor._status_Register = initialStatusRegister;
 
             var cycles = processor.BCC();
+
+            processor._pc_Register.Should().Be(expectedPcRegister);
+            cycles.Should().Be(expectedCycles);
+        }
+
+        [TestCase((ushort)0x00f0, (sbyte)0x05, (byte)0b10000000, (ushort)0x00f5, (byte)1)]
+        [TestCase((ushort)0x00ff, (sbyte)0x05, (byte)0b10000000, (ushort)0x0104, (byte)2)]
+        [TestCase((ushort)0x00ff, (sbyte)-1, (byte)0b10000000, (ushort)0x00fe, (byte)1)]
+        [TestCase((ushort)0x0100, (sbyte)-1, (byte)0b10000000, (ushort)0x00ff, (byte)2)]
+        [TestCase((ushort)0x0100, (sbyte)-1, (byte)0b0000000, (ushort)0x0100, (byte)0)]
+        public void BMI_Test(ushort pcRegister, sbyte offset, byte initialStatusRegister, ushort expectedPcRegister, byte expectedCycles)
+        {
+            var processor = GetInstance();
+            processor._pc_Register = pcRegister;
+            processor._offset = offset;
+            processor._status_Register = initialStatusRegister;
+
+            var cycles = processor.BMI();
+
+            processor._pc_Register.Should().Be(expectedPcRegister);
+            cycles.Should().Be(expectedCycles);
+        }
+
+        [TestCase((ushort)0x00f0, (sbyte)0x05, (byte)0b00000000, (ushort)0x00f5, (byte)1)]
+        [TestCase((ushort)0x00ff, (sbyte)0x05, (byte)0b00000000, (ushort)0x0104, (byte)2)]
+        [TestCase((ushort)0x00ff, (sbyte)-1, (byte)0b00000000, (ushort)0x00fe, (byte)1)]
+        [TestCase((ushort)0x0100, (sbyte)-1, (byte)0b00000000, (ushort)0x00ff, (byte)2)]
+        [TestCase((ushort)0x0100, (sbyte)-1, (byte)0b01000000, (ushort)0x0100, (byte)0)]
+        public void BVC_Test(ushort pcRegister, sbyte offset, byte initialStatusRegister, ushort expectedPcRegister, byte expectedCycles)
+        {
+            var processor = GetInstance();
+            processor._pc_Register = pcRegister;
+            processor._offset = offset;
+            processor._status_Register = initialStatusRegister;
+
+            var cycles = processor.BVC();
+
+            processor._pc_Register.Should().Be(expectedPcRegister);
+            cycles.Should().Be(expectedCycles);
+        }
+
+        [TestCase((ushort)0x00f0, (sbyte)0x05, (byte)0b00000010, (ushort)0x00f5, (byte)1)]
+        [TestCase((ushort)0x00ff, (sbyte)0x05, (byte)0b00000010, (ushort)0x0104, (byte)2)]
+        [TestCase((ushort)0x00ff, (sbyte)-1, (byte)0b00000010, (ushort)0x00fe, (byte)1)]
+        [TestCase((ushort)0x0100, (sbyte)-1, (byte)0b00000010, (ushort)0x00ff, (byte)2)]
+        [TestCase((ushort)0x0100, (sbyte)-1, (byte)0b00000000, (ushort)0x0100, (byte)0)]
+        public void BEQ_Test(ushort pcRegister, sbyte offset, byte initialStatusRegister, ushort expectedPcRegister, byte expectedCycles)
+        {
+            var processor = GetInstance();
+            processor._pc_Register = pcRegister;
+            processor._offset = offset;
+            processor._status_Register = initialStatusRegister;
+
+            var cycles = processor.BEQ();
 
             processor._pc_Register.Should().Be(expectedPcRegister);
             cycles.Should().Be(expectedCycles);
