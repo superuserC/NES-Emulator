@@ -26,9 +26,73 @@ namespace NES_Emulator.Core.Processor
             return 0;
         }
 
-        public byte BCS() { throw new NotImplementedException(); }
-        public byte BNE() { throw new NotImplementedException(); }
-        public byte BVS() { throw new NotImplementedException(); }
+        /// <summary>
+        /// Branch on C = 1
+        /// </summary>
+        /// <returns></returns>
+        public byte BCS()
+        {
+            byte cycles = 0;
+            if (ReadStatusRegister(Flags6502.Carry) == 1)
+            {
+                cycles++;
+                ushort newPC = (ushort)(_pc_Register + _offset);
+                if ((newPC & 0xff00) != (_pc_Register & 0xff00))
+                {
+                    cycles++;
+                }
+
+                _pc_Register = newPC;
+            }
+
+            return cycles;
+        }
+
+        /// <summary>
+        /// Branch on Z = 0
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public byte BNE()
+        {
+            byte cycles = 0;
+            if (ReadStatusRegister(Flags6502.Zero) == 0)
+            {
+                cycles++;
+                ushort newPC = (ushort)(_pc_Register + _offset);
+                if ((newPC & 0xff00) != (_pc_Register & 0xff00))
+                {
+                    cycles++;
+                }
+
+                _pc_Register = newPC;
+            }
+
+            return cycles;
+        }
+
+        /// <summary>
+        /// Branch on V = 1
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public byte BVS()
+        {
+            byte cycles = 0;
+            if (ReadStatusRegister(Flags6502.Overflow) == 1)
+            {
+                cycles++;
+                ushort newPC = (ushort)(_pc_Register + _offset);
+                if ((newPC & 0xff00) != (_pc_Register & 0xff00))
+                {
+                    cycles++;
+                }
+
+                _pc_Register = newPC;
+            }
+
+            return cycles;
+        }
 
         /// <summary>
         /// Clear overflow flag.
