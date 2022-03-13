@@ -52,7 +52,6 @@ namespace NES_Emulator.Core.Processor
         /// Branch on Z = 0
         /// </summary>
         /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
         public byte BNE()
         {
             byte cycles = 0;
@@ -75,7 +74,6 @@ namespace NES_Emulator.Core.Processor
         /// Branch on V = 1
         /// </summary>
         /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
         public byte BVS()
         {
             byte cycles = 0;
@@ -480,7 +478,33 @@ namespace NES_Emulator.Core.Processor
             SetFlag(Flags6502.Overflow, (M6 >> 6) == 1);
             return 0;
         }
-        public byte BRK() { throw new NotImplementedException(); }
+
+        /// <summary>
+        /// Force Break
+        /// cc	addr	data
+        /// --	----	----
+        /// 1	PC	    00	;BRK opcode
+        /// 2	PC+1	??	;the padding byte, ignored by the CPU
+        /// 3	S       PCH ;high byte of PC
+        /// 4	S-1	    PCL	;low byte of PC
+        /// 5	S-2	    P	;status flags with B flag set
+        /// 6	FFFE	??	;low byte of target address
+        /// 7	FFFF	??	;high byte of target address
+        /// </summary>
+        /// <returns></returns>
+        public byte BRK()
+        {
+            SetFlag(Flags6502.IRQDisable);
+            var tmp = _pc_Register + 1;
+            PushToStack((byte)(tmp >> 8));
+            PushToStack((byte)tmp);
+            SetFlag(Flags6502.Break);
+            PushToStack(_status_Register);
+            ClearFlag(Flags6502.Break);
+            _pc_Register = (ushort)((ushort)Read(0xfffe) | Read(0xffff) << 8);
+            return 0;
+
+        }
 
         /// <summary>
         /// Clear decimal mode.
@@ -832,7 +856,6 @@ namespace NES_Emulator.Core.Processor
         ///            = A + ~M + C
         /// </summary>
         /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
         public byte SBC()
         {
             var tmp = (byte)~_operand_Value;

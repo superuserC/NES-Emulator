@@ -875,6 +875,26 @@ namespace NES_Emulator.Tests.Processor
             cycles.Should().Be(expectedCycles);
         }
 
+        [TestCase((ushort)0xabcd, (byte)0b00000000, (byte)0b00010100, (byte)0xab, (byte)0xce)]
+        [TestCase((ushort)0x0000, (byte)0b11101011, (byte)0b11111111, (byte)0x00, (byte)0x01)]
+        public void BRK_Test(ushort initialPCRegister, byte initialStatusRegister, byte writenStatusRegister, byte highPCRegister, byte lowPCRegister)
+        {
+            var processor = GetInstance();
+            processor._pc_Register = initialPCRegister;
+            processor._status_Register = initialStatusRegister;
+            processor._sp_Register = 0xff;
+            processor.DataTransfer.Read(0xffff).Returns((byte)0xab);
+            processor.DataTransfer.Read(0xfffe).Returns((byte)0xcd);
+
+            processor.BRK();
+
+            processor.DataTransfer.Received(3).Write(Arg.Any<ushort>(), Arg.Any<byte>());
+            processor.DataTransfer.Received(1).Write(0x01fe, highPCRegister);
+            processor.DataTransfer.Received(1).Write(0x01fd, lowPCRegister);
+            processor.DataTransfer.Received(1).Write(0x01fc, writenStatusRegister);
+            processor._pc_Register.Should().Be(0xabcd);
+        }
+
         private _6502 GetInstance() => new _6502(_dataTransfer);
     }
 }
