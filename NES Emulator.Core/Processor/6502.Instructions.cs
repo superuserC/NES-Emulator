@@ -201,7 +201,28 @@ namespace NES_Emulator.Core.Processor
 
             return cycles;
         }
-        public byte BPL() { throw new NotImplementedException(); }
+
+        /// <summary>
+        /// Branch on N = 0
+        /// </summary>
+        /// <returns></returns>
+        public byte BPL()
+        {
+            byte cycles = 0;
+            if (ReadStatusRegister(Flags6502.Negative) == 0)
+            {
+                cycles++;
+                ushort newPC = (ushort)(_pc_Register + _offset);
+                if ((newPC & 0xff00) != (_pc_Register & 0xff00))
+                {
+                    cycles++;
+                }
+
+                _pc_Register = newPC;
+            }
+
+            return cycles;
+        }
 
         /// <summary>
         /// Clear carry flag.
