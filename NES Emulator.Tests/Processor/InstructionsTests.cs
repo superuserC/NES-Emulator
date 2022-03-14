@@ -895,6 +895,30 @@ namespace NES_Emulator.Tests.Processor
             processor._pc_Register.Should().Be(0xabcd);
         }
 
+        [Test]
+        public void JMP_Test()
+        {
+            var processor = GetInstance();
+            processor._operand_Address = _fixture.Create<ushort>();
+
+            processor.JMP();
+
+            processor._pc_Register.Should().Be(processor._operand_Address);
+        }
+
+        [Test]
+        public void JSR_Test()
+        {
+            var processor = GetInstance();
+            processor._operand_Address = 0xabcd;
+
+            processor.JSR();
+
+            processor.DataTransfer.Received(1).Write(0x01fe, 0xab);
+            processor.DataTransfer.Received(1).Write(0x01fd, 0xcd);
+            processor._pc_Register.Should().Be(processor._operand_Address);
+        }
+
         private _6502 GetInstance() => new _6502(_dataTransfer);
     }
 }

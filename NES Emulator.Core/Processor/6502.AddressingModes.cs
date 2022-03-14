@@ -45,6 +45,7 @@ namespace NES_Emulator.Core.Processor
         {
             _isAMImplied = false;
             _operand_Address = (ushort)(0x00ff & Read(_pc_Register));
+            _operand_Value = Read(_operand_Address);
             _pc_Register++;
             return 0;
         }
@@ -57,6 +58,7 @@ namespace NES_Emulator.Core.Processor
         {
             _isAMImplied = false;
             _operand_Address = (ushort)(0x00ff & (Read(_pc_Register) + _x_Register));
+            _operand_Value = Read(_operand_Address);
             _pc_Register++;
             return 0;
         }
@@ -69,6 +71,7 @@ namespace NES_Emulator.Core.Processor
         {
             _isAMImplied = false;
             _operand_Address = (ushort)(0x00ff & (Read(_pc_Register) + _y_Register));
+            _operand_Value = Read(_operand_Address);
             _pc_Register++;
             return 0;
         }
@@ -88,6 +91,7 @@ namespace NES_Emulator.Core.Processor
             _pc_Register++;
 
             _operand_Address = (ushort)((ushort)(high << 8) | low);
+            _operand_Value = Read(_operand_Address);
             return 0;
         }
 
@@ -105,6 +109,7 @@ namespace NES_Emulator.Core.Processor
 
             _operand_Address = (ushort)((ushort)(high << 8) | low);
             _operand_Address += _x_Register;
+            _operand_Value = Read(_operand_Address);
 
             // Check if a page boundary is passed.
             // If a boundary is passed then an additional cycle is needed for instruction.
@@ -129,6 +134,7 @@ namespace NES_Emulator.Core.Processor
 
             _operand_Address = (ushort)((ushort)(high << 8) | low);
             _operand_Address += _y_Register;
+            _operand_Value = Read(_operand_Address);
 
             // Check if a page boundary is passed.
             // If a boundary is passed then an additional cycle is needed for instruction.
@@ -144,7 +150,6 @@ namespace NES_Emulator.Core.Processor
             _isAMImplied = false;
             _offset = (sbyte)Read(_pc_Register);
             _pc_Register++;
-            //_operand_Address = (ushort)(_pc_Register + offset);
             return 0;
         }
 
@@ -167,10 +172,12 @@ namespace NES_Emulator.Core.Processor
             {
                 // if we increment by 1 we will got to next page.
                 _operand_Address = (ushort)(Read((ushort)(address & 0xff00)) << 8 | Read(address));
+                _operand_Value = Read(_operand_Address);
             }
             else
             {
                 _operand_Address = (ushort)(Read((ushort)(address + 1)) << 8 | Read(address));
+                _operand_Value = Read(_operand_Address);
             }
 
             return 0;
@@ -190,6 +197,7 @@ namespace NES_Emulator.Core.Processor
             byte indHigh = Read((ushort)((low & 0x00ff) + _x_Register + 1));
 
             _operand_Address = (ushort)((indHigh << 8) | (indLow & 0x00ff));
+            _operand_Value = Read(_operand_Address);
             return 0;
 
         }
@@ -209,8 +217,9 @@ namespace NES_Emulator.Core.Processor
 
             _operand_Address = (ushort)((indHigh << 8) | (indLow & 0x00ff));
             _operand_Address += _y_Register;
+            _operand_Value = Read(_operand_Address);
 
-            if((indHigh << 8) != (_operand_Address & 0xff00))
+            if ((indHigh << 8) != (_operand_Address & 0xff00))
             {
                 return 1;
             }

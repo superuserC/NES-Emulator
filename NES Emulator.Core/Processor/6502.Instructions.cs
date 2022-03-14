@@ -127,7 +127,18 @@ namespace NES_Emulator.Core.Processor
             SetFlag(Flags6502.Zero, tmp.IsZero());
             return 0;
         }
-        public byte JSR() { throw new NotImplementedException(); }
+
+        /// <summary>
+        /// Jump to New Location Saving Return Address
+        /// </summary>
+        /// <returns></returns>
+        public byte JSR() 
+        {
+            _pc_Register = _operand_Address;
+            PushToStack((byte)(_operand_Address >> 8));
+            PushToStack((byte)(_operand_Address));
+            return 0;
+        }
 
         /// <summary>
         /// Shift one bit right (memory or accumulator)
@@ -791,7 +802,15 @@ namespace NES_Emulator.Core.Processor
             return 0;
         }
 
-        public byte JMP() { throw new NotImplementedException(); }
+        /// <summary>
+        /// Jump to New Location
+        /// </summary>
+        /// <returns></returns>
+        public byte JMP()
+        {
+            _pc_Register = _operand_Address;
+            return 0;
+        }
 
         /// <summary>
         /// Load index Y with memory.
