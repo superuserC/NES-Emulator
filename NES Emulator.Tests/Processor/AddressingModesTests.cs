@@ -43,6 +43,7 @@ namespace NES_Emulator.Tests.Processor
 
             processor._operand_Value.Should().Be(nextByte);
             processor._operand_Address.Should().Be(0x0000);
+            processor.DataTransfer.Received(1).Read(processor._operand_Address);
             cycles.Should().Be(0);
         }
 
@@ -57,6 +58,7 @@ namespace NES_Emulator.Tests.Processor
 
             // processor._operand_Value.Should().Be(nextByte);
             processor._operand_Address.Should().Be(0x0025);
+            processor.DataTransfer.Received(1).Read(processor._operand_Address);
             cycles.Should().Be(0);
         }
 
@@ -71,6 +73,7 @@ namespace NES_Emulator.Tests.Processor
             var cycles = processor.AM_ZPX();
 
             processor._operand_Address.Should().Be(0x0026);
+            processor.DataTransfer.Received(1).Read(processor._operand_Address);
             cycles.Should().Be(0);
         }
 
@@ -85,6 +88,7 @@ namespace NES_Emulator.Tests.Processor
             var cycles = processor.AM_ZPY();
 
             processor._operand_Address.Should().Be(0x0026);
+            processor.DataTransfer.Received(1).Read(processor._operand_Address);
             cycles.Should().Be(0);
         }
 
@@ -117,6 +121,7 @@ namespace NES_Emulator.Tests.Processor
             var cycles = processor.AM_ABX();
 
             processor._operand_Address.Should().Be(address);
+            processor.DataTransfer.Received(1).Read(processor._operand_Address);
             cycles.Should().Be((byte)(pagePassed ? 1 : 0));
         }
 
@@ -134,6 +139,7 @@ namespace NES_Emulator.Tests.Processor
             var cycles = processor.AM_ABY();
 
             processor._operand_Address.Should().Be(address);
+            processor.DataTransfer.Received(1).Read(processor._operand_Address);
             cycles.Should().Be((byte)(pageCrossed ? 1 : 0));
         }
 
@@ -184,6 +190,7 @@ namespace NES_Emulator.Tests.Processor
             byte cycles = processor.AM_REL();
 
             processor._offset.Should().Be((sbyte)op);
+            processor.DataTransfer.Received(1).Read(processor._operand_Address);
             cycles.Should().Be(0);
         }
 

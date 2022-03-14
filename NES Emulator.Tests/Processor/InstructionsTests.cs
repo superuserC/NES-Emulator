@@ -5,6 +5,7 @@ using NES_Emulator.Core.Interfaces;
 using NES_Emulator.Core.Processor;
 using NSubstitute;
 using NUnit.Framework;
+using System;
 
 namespace NES_Emulator.Tests.Processor
 {
@@ -917,6 +918,16 @@ namespace NES_Emulator.Tests.Processor
             processor.DataTransfer.Received(1).Write(0x01fe, 0xab);
             processor.DataTransfer.Received(1).Write(0x01fd, 0xcd);
             processor._pc_Register.Should().Be(processor._operand_Address);
+        }
+
+        [Test]
+        public void XXX_Test()
+        {
+            var processor = GetInstance();
+
+            Action action = () => processor.XXX();
+
+            action.Should().Throw<NotImplementedException>().WithMessage("Invalid instruction.");
         }
 
         private _6502 GetInstance() => new _6502(_dataTransfer);
