@@ -56,6 +56,21 @@ namespace NES_Emulator.Core.Processor
         /// <summary>
         /// See processor sheet.
         /// </summary>
-        public void Reset() => throw new NotImplementedException();
+        public void Reset()
+        {
+            ResetRegisters();
+            byte resetHighByte = Read(0xfffd);
+            byte resetLowByte = Read(0xfffc);
+            _pc_Register = (ushort)(resetHighByte << 8 | (ushort)resetLowByte);
+        }
+
+        private void ResetRegisters()
+        {
+            _acc_Register = 0;
+            _x_Register = 0;
+            _y_Register = 0;
+            _status_Register = 0;
+            _sp_Register = 0;
+        }
     }
 }
