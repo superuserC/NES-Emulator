@@ -46,7 +46,24 @@ namespace NES_Emulator.Core.Processor
         /// <summary>
         /// See processor sheet.
         /// </summary>
-        public void IRQ() => throw new NotImplementedException();
+        public byte IRQ()
+        {
+            if(ReadStatusRegister(Flags6502.IRQDisable) == 0)
+            {
+                PushToStack((byte)(_pc_Register >> 8));
+                PushToStack((byte)_pc_Register);
+                SetFlag(Flags6502.Unused);
+                SetFlag(Flags6502.IRQDisable);
+                ClearFlag(Flags6502.Break);
+                PushToStack(_status_Register);
+
+                byte resetHighByte = Read(0xffff);
+                byte resetLowByte = Read(0xfffe);
+                _pc_Register = (ushort)(resetHighByte << 8 | (ushort)resetLowByte);
+                return 7;
+            }
+            return 0;
+        }
 
         /// <summary>
         /// See processor sheet.
@@ -54,14 +71,16 @@ namespace NES_Emulator.Core.Processor
         public void NMI() => throw new NotImplementedException();
 
         /// <summary>
-        /// See processor sheet.
+        /// Reset register
+        /// Set PC to 0xfffd - 0xfffc
         /// </summary>
-        public void Reset()
+        public byte Reset()
         {
             ResetRegisters();
             byte resetHighByte = Read(0xfffd);
             byte resetLowByte = Read(0xfffc);
             _pc_Register = (ushort)(resetHighByte << 8 | (ushort)resetLowByte);
+            return 8;
         }
 
         private void ResetRegisters()
