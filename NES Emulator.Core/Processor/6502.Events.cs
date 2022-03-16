@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace NES_Emulator.Core.Processor
+﻿namespace NES_Emulator.Core.Processor
 {
     public partial class _6502
     {
@@ -68,7 +62,20 @@ namespace NES_Emulator.Core.Processor
         /// <summary>
         /// See processor sheet.
         /// </summary>
-        public void NMI() => throw new NotImplementedException();
+        public byte NMI()
+        {
+            PushToStack((byte)(_pc_Register >> 8));
+            PushToStack((byte)_pc_Register);
+            SetFlag(Flags6502.Unused);
+            SetFlag(Flags6502.IRQDisable);
+            ClearFlag(Flags6502.Break);
+            PushToStack(_status_Register);
+
+            byte resetHighByte = Read(0xfffb);
+            byte resetLowByte = Read(0xfffa);
+            _pc_Register = (ushort)(resetHighByte << 8 | (ushort)resetLowByte);
+            return 7;
+        }
 
         /// <summary>
         /// Reset register

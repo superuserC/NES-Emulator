@@ -3,11 +3,6 @@ using NES_Emulator.Core.Interfaces;
 using NES_Emulator.Core.Processor;
 using NSubstitute;
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NES_Emulator.Tests.Processor
 {
@@ -73,6 +68,25 @@ namespace NES_Emulator.Tests.Processor
             processor.DataTransfer.Received(0).Write(0x01fe, 0x12);
             processor.DataTransfer.Received(0).Write(0x01fd, 0x34);
             processor.DataTransfer.Received(0).Write(0x01fc, finalStatusRegister);
+        }
+
+        [TestCase((byte)0b00010000, (byte)0b00100100, 7, (ushort)0xcdab)]
+        public void NMI_Test(byte initialStatusRegister, byte finalStatusRegister, byte expectedCycles, ushort expectedPCRegister)
+        {
+            var processor = GetInstance();
+            processor._status_Register = initialStatusRegister;
+            processor._pc_Register = 0x1234;
+            processor.DataTransfer.Read(0xfffa).Returns((byte)0xab);
+            processor.DataTransfer.Read(0xfffb).Returns((byte)0xcd);
+
+            var cycles = processor.NMI();
+
+            processor._status_Register.Should().Be(finalStatusRegister);
+            processor._pc_Register.Should().Be(expectedPCRegister);
+            cycles.Should().Be(expectedCycles);
+            processor.DataTransfer.Received(1).Write(0x01fe, 0x12);
+            processor.DataTransfer.Received(1).Write(0x01fd, 0x34);
+            processor.DataTransfer.Received(1).Write(0x01fc, finalStatusRegister);
         }
 
         private _6502 GetInstance() => new _6502(_dataTransfer);
