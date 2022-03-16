@@ -5,4 +5,8 @@
     <RootNamespace>NES_Emulator.Core</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Dawn.Guard" Version="1.12.0" />
+  </ItemGroup>
+
 </Project>
