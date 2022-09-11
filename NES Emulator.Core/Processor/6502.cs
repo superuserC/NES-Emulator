@@ -33,6 +33,8 @@ namespace NES_Emulator.Core.Processor
 
         public IDataTransfer DataTransfer { get; set; }
 
+        public NES Bus { get; set; }
+
         /// <summary>
         /// Accumulator
         /// </summary>

@@ -6,4 +6,8 @@
     <RootNamespace>NES_Emulator</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\NES Emulator.Core\NES Emulator.Core.csproj" />
+  </ItemGroup>
+
 </Project>
